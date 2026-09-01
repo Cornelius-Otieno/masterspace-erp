@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Printer, Pencil, Trash2 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 import { api } from '@/lib/api';
 import { GhostButton, PrimaryButton, Select } from '@/components/ui/Form';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -18,6 +19,7 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const load = () => {
@@ -38,6 +40,28 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
   const onDelete = async () => {
     await api.delete(`/${endpoint}/${id}`);
     navigate(`/${endpoint}`);
+  };
+
+  const onDownloadPdf = async () => {
+    const documentElement = document.querySelector<HTMLElement>('.print-area');
+    if (!documentElement) return;
+
+    setDownloading(true);
+    try {
+      await document.fonts.ready;
+      await html2pdf()
+        .set({
+          margin: 0,
+          filename: `${data.number}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        })
+        .from(documentElement)
+        .save();
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) return <div className="p-8 text-center text-slate-400">Loading…</div>;
@@ -68,8 +92,8 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
           <GhostButton onClick={() => setConfirmOpen(true)} className="text-red-600">
             <Trash2 size={16} /> Delete
           </GhostButton>
-          <PrimaryButton onClick={() => window.print()}>
-            <Printer size={16} /> Download PDF
+          <PrimaryButton onClick={onDownloadPdf} disabled={downloading}>
+            <Printer size={16} /> {downloading ? 'Preparing PDF…' : 'Download PDF'}
           </PrimaryButton>
         </div>
       </div>
