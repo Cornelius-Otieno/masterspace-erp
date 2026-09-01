@@ -1,0 +1,253 @@
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'SALES',
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Client" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "email" TEXT,
+    "phone" TEXT,
+    "address" TEXT,
+    "city" TEXT,
+    "country" TEXT DEFAULT 'Kenya',
+    "taxPin" TEXT,
+    "notes" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Supplier" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "email" TEXT,
+    "phone" TEXT,
+    "address" TEXT,
+    "city" TEXT,
+    "country" TEXT DEFAULT 'Kenya',
+    "taxPin" TEXT,
+    "notes" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "DocumentCounter" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "prefix" TEXT NOT NULL,
+    "currentNumber" INTEGER NOT NULL DEFAULT 0
+);
+
+-- CreateTable
+CREATE TABLE "Invoice" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "contractNo" TEXT,
+    "clientId" TEXT NOT NULL,
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dueDate" DATETIME,
+    "currency" TEXT NOT NULL DEFAULT 'KES',
+    "status" TEXT NOT NULL DEFAULT 'DRAFT',
+    "subtotal" REAL NOT NULL DEFAULT 0,
+    "taxTotal" REAL NOT NULL DEFAULT 0,
+    "total" REAL NOT NULL DEFAULT 0,
+    "totalInWords" TEXT,
+    "notes" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Invoice_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "InvoiceItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "invoiceId" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "taxRate" REAL NOT NULL DEFAULT 0,
+    "quantity" REAL NOT NULL DEFAULT 1,
+    "rate" REAL NOT NULL DEFAULT 0,
+    "amount" REAL NOT NULL DEFAULT 0,
+    "taxAmount" REAL NOT NULL DEFAULT 0,
+    "total" REAL NOT NULL DEFAULT 0,
+    CONSTRAINT "InvoiceItem_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "PurchaseOrder" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "supplierId" TEXT NOT NULL,
+    "deliverTo" TEXT DEFAULT 'Masterspace Solutions HQ',
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expectedDate" DATETIME,
+    "currency" TEXT NOT NULL DEFAULT 'KES',
+    "status" TEXT NOT NULL DEFAULT 'DRAFT',
+    "subtotal" REAL NOT NULL DEFAULT 0,
+    "total" REAL NOT NULL DEFAULT 0,
+    "notes" TEXT,
+    "preparedBy" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "PurchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "POItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "purchaseOrderId" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "unit" TEXT,
+    "quantity" REAL NOT NULL DEFAULT 1,
+    "rate" REAL NOT NULL DEFAULT 0,
+    "amount" REAL NOT NULL DEFAULT 0,
+    CONSTRAINT "POItem_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "PurchaseOrder" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Quotation" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "clientId" TEXT NOT NULL,
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "validUntil" DATETIME,
+    "currency" TEXT NOT NULL DEFAULT 'KES',
+    "status" TEXT NOT NULL DEFAULT 'DRAFT',
+    "subtotal" REAL NOT NULL DEFAULT 0,
+    "taxTotal" REAL NOT NULL DEFAULT 0,
+    "total" REAL NOT NULL DEFAULT 0,
+    "notes" TEXT,
+    "terms" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Quotation_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "QuotationItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "quotationId" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "quantity" REAL NOT NULL DEFAULT 1,
+    "unitPrice" REAL NOT NULL DEFAULT 0,
+    "amount" REAL NOT NULL DEFAULT 0,
+    CONSTRAINT "QuotationItem_quotationId_fkey" FOREIGN KEY ("quotationId") REFERENCES "Quotation" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "DeliveryNote" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "clientId" TEXT NOT NULL,
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deliveryDate" DATETIME,
+    "deliveredBy" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'DRAFT',
+    "notes" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "DeliveryNote_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "DeliveryItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "deliveryNoteId" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "quantity" REAL NOT NULL DEFAULT 1,
+    "unit" TEXT,
+    "remarks" TEXT,
+    CONSTRAINT "DeliveryItem_deliveryNoteId_fkey" FOREIGN KEY ("deliveryNoteId") REFERENCES "DeliveryNote" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Receipt" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "clientId" TEXT NOT NULL,
+    "invoiceId" TEXT,
+    "contractNo" TEXT,
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "currency" TEXT NOT NULL DEFAULT 'KES',
+    "status" TEXT NOT NULL DEFAULT 'PAID',
+    "subtotal" REAL NOT NULL DEFAULT 0,
+    "total" REAL NOT NULL DEFAULT 0,
+    "paymentMethod" TEXT,
+    "paymentRef" TEXT,
+    "notes" TEXT,
+    "preparedBy" TEXT,
+    "approvedBy" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Receipt_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Receipt_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "ReceiptItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "receiptId" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "milestone" TEXT,
+    "amount" REAL NOT NULL DEFAULT 0,
+    CONSTRAINT "ReceiptItem_receiptId_fkey" FOREIGN KEY ("receiptId") REFERENCES "Receipt" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "WorkOrder" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "number" TEXT NOT NULL,
+    "clientId" TEXT NOT NULL,
+    "siteDetails" TEXT,
+    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expectedDate" DATETIME,
+    "status" TEXT NOT NULL DEFAULT 'DRAFT',
+    "notes" TEXT,
+    "authorizedBy" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "WorkOrder_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "WorkOrderTask" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "workOrderId" TEXT NOT NULL,
+    "task" TEXT NOT NULL,
+    "description" TEXT,
+    "assignedTo" TEXT,
+    "estimatedHours" REAL NOT NULL DEFAULT 0,
+    CONSTRAINT "WorkOrderTask_workOrderId_fkey" FOREIGN KEY ("workOrderId") REFERENCES "WorkOrder" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DocumentCounter_prefix_key" ON "DocumentCounter"("prefix");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Invoice_number_key" ON "Invoice"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PurchaseOrder_number_key" ON "PurchaseOrder"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Quotation_number_key" ON "Quotation"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DeliveryNote_number_key" ON "DeliveryNote"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Receipt_number_key" ON "Receipt"("number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "WorkOrder_number_key" ON "WorkOrder"("number");

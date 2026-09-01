@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* ---------------- Print styles for document templates ---------------- */
+@media print {
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-area {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+}
+
+/* Document sheet look (screen) */
+.doc-sheet {
+  background: #fff;
+  color: #1e293b;
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  padding: 16mm;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .doc-sheet {
+    width: 100%;
+    padding: 20px;
+  }
+}

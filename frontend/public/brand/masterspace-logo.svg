@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img" aria-labelledby="title">
+  <title id="title">Masterspace Solutions</title>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#168cc3" />
+      <stop offset="1" stop-color="#00164d" />
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#blue)" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="175" cy="200" r="148" stroke-width="22" stroke-dasharray="730 230" transform="rotate(-22 175 200)" />
+    <path d="M60 267c55 22 100-64 111-130l20 170 42-164 20 132c12-19 19-48 24-82" stroke-width="26" />
+    <path d="M181 177c20-58 47-82 74-91-15 47-36 87-63 118" stroke-width="33" />
+    <path d="M190 251c52-42 93-65 142-78" stroke-width="18" />
+  </g>
+  <text x="405" y="205" fill="#03437e" font-family="Arial, sans-serif" font-size="114" font-weight="700" letter-spacing="-4">Masterspace</text>
+  <text x="408" y="306" fill="#77777b" font-family="Arial, sans-serif" font-size="67" font-weight="600" letter-spacing="21">SOLUTIONS</text>
+</svg>

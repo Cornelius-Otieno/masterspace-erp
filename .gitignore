@@ -1,0 +1,16 @@
+# Dependencies and generated output
+**/node_modules/
+**/dist/
+**/*.tsbuildinfo
+
+# Local environment and data
+**/.env
+!**/.env.example
+backend/prisma/*.db
+backend/prisma/*.db-*
+
+# Logs and editor files
+*.log
+.vscode/
+.DS_Store
+Thumbs.db

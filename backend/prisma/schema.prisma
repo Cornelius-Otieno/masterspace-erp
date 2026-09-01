@@ -1,0 +1,271 @@
+// Masterspace ERP - Prisma schema
+// Uses SQLite for easy local development (swap provider to "postgresql" for production).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------
+// Enums (SQLite has no native enums; Prisma emulates them as strings)
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// Core models
+// ------------------------------------------------------------------
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("SALES")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  country   String?  @default("Kenya")
+  taxPin    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices      Invoice[]
+  quotations    Quotation[]
+  deliveryNotes DeliveryNote[]
+  receipts      Receipt[]
+  workOrders    WorkOrder[]
+}
+
+model Supplier {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  country   String?  @default("Kenya")
+  taxPin    String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+}
+
+// Shared auto-increment sequence per document prefix (INV, LSO, QOT, POD, RCT, WOR, CRN)
+model DocumentCounter {
+  id            String @id @default(uuid())
+  prefix        String @unique
+  currentNumber Int    @default(0)
+}
+
+// ------------------------------------------------------------------
+// Invoice
+// ------------------------------------------------------------------
+model Invoice {
+  id           String        @id @default(uuid())
+  number       String        @unique
+  contractNo   String?
+  clientId     String
+  client       Client        @relation(fields: [clientId], references: [id])
+  issueDate    DateTime      @default(now())
+  dueDate      DateTime?
+  currency     String        @default("KES")
+  status       String        @default("DRAFT")
+  subtotal     Float         @default(0)
+  taxTotal     Float         @default(0)
+  total        Float         @default(0)
+  totalInWords String?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  items    InvoiceItem[]
+  receipts Receipt[]
+}
+
+model InvoiceItem {
+  id          String  @id @default(uuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  taxRate     Float   @default(0)
+  quantity    Float   @default(1)
+  rate        Float   @default(0)
+  amount      Float   @default(0)
+  taxAmount   Float   @default(0)
+  total       Float   @default(0)
+}
+
+// ------------------------------------------------------------------
+// Purchase Order
+// ------------------------------------------------------------------
+model PurchaseOrder {
+  id           String              @id @default(uuid())
+  number       String              @unique
+  supplierId   String
+  supplier     Supplier            @relation(fields: [supplierId], references: [id])
+  deliverTo    String?             @default("Masterspace Solutions HQ")
+  issueDate    DateTime            @default(now())
+  expectedDate DateTime?
+  currency     String              @default("KES")
+  status       String              @default("DRAFT")
+  subtotal     Float               @default(0)
+  total        Float               @default(0)
+  notes        String?
+  preparedBy   String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  items POItem[]
+}
+
+model POItem {
+  id              String        @id @default(uuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  description     String
+  unit            String?
+  quantity        Float         @default(1)
+  rate            Float         @default(0)
+  amount          Float         @default(0)
+}
+
+// ------------------------------------------------------------------
+// Quotation
+// ------------------------------------------------------------------
+model Quotation {
+  id         String          @id @default(uuid())
+  number     String          @unique
+  clientId   String
+  client     Client          @relation(fields: [clientId], references: [id])
+  issueDate  DateTime        @default(now())
+  validUntil DateTime?
+  currency   String          @default("KES")
+  status     String          @default("DRAFT")
+  subtotal   Float           @default(0)
+  taxTotal   Float           @default(0)
+  total      Float           @default(0)
+  notes      String?
+  terms      String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  items QuotationItem[]
+}
+
+model QuotationItem {
+  id          String    @id @default(uuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Float     @default(1)
+  unitPrice   Float     @default(0)
+  amount      Float     @default(0)
+}
+
+// ------------------------------------------------------------------
+// Delivery Note (POD)
+// ------------------------------------------------------------------
+model DeliveryNote {
+  id           String         @id @default(uuid())
+  number       String         @unique
+  clientId     String
+  client       Client         @relation(fields: [clientId], references: [id])
+  issueDate    DateTime       @default(now())
+  deliveryDate DateTime?
+  deliveredBy  String?
+  status       String         @default("DRAFT")
+  notes        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  items DeliveryItem[]
+}
+
+model DeliveryItem {
+  id             String       @id @default(uuid())
+  deliveryNoteId String
+  deliveryNote   DeliveryNote @relation(fields: [deliveryNoteId], references: [id], onDelete: Cascade)
+  description    String
+  quantity       Float        @default(1)
+  unit           String?
+  remarks        String?
+}
+
+// ------------------------------------------------------------------
+// Receipt
+// ------------------------------------------------------------------
+model Receipt {
+  id           String        @id @default(uuid())
+  number       String        @unique
+  clientId     String
+  client       Client        @relation(fields: [clientId], references: [id])
+  invoiceId    String?
+  invoice      Invoice?      @relation(fields: [invoiceId], references: [id])
+  contractNo   String?
+  issueDate    DateTime      @default(now())
+  currency     String        @default("KES")
+  status       String        @default("PAID")
+  subtotal     Float         @default(0)
+  total        Float         @default(0)
+  paymentMethod String?
+  paymentRef    String?
+  notes         String?
+  preparedBy    String?
+  approvedBy    String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  items ReceiptItem[]
+}
+
+model ReceiptItem {
+  id          String  @id @default(uuid())
+  receiptId   String
+  receipt     Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  description String
+  milestone   String?
+  amount      Float   @default(0)
+}
+
+// ------------------------------------------------------------------
+// Work Order
+// ------------------------------------------------------------------
+model WorkOrder {
+  id             String          @id @default(uuid())
+  number         String          @unique
+  clientId       String
+  client         Client          @relation(fields: [clientId], references: [id])
+  siteDetails    String?
+  issueDate      DateTime        @default(now())
+  expectedDate   DateTime?
+  status         String          @default("DRAFT")
+  notes          String?
+  authorizedBy   String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  tasks WorkOrderTask[]
+}
+
+model WorkOrderTask {
+  id             String    @id @default(uuid())
+  workOrderId    String
+  workOrder      WorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  task           String
+  description    String?
+  assignedTo     String?
+  estimatedHours Float     @default(0)
+}
