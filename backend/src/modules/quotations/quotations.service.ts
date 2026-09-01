@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { QuotationStatus } from '../../common/enums';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CounterService } from '../../common/prisma/counter.service';
@@ -31,7 +31,11 @@ export class QuotationsService {
 
   async create(dto: CreateQuotationDto) {
     const issueDate = dto.issueDate ? new Date(dto.issueDate) : new Date();
-    const number = await this.counter.next(DOC_PREFIX.QUOTATION, issueDate);
+    const manualNumber = dto.number?.trim();
+    if (manualNumber && await this.prisma.quotation.findUnique({ where: { number: manualNumber } })) {
+      throw new BadRequestException('A quotation with this number already exists.');
+    }
+    const number = manualNumber || await this.counter.next(DOC_PREFIX.QUOTATION, issueDate);
     const { rows, subtotal, taxTotal, total } = computeItems(dto.items ?? [], dto.taxRate ?? 0);
     return this.prisma.quotation.create({
       data: {

@@ -20,6 +20,10 @@ export class WorkOrderTaskDto {
 }
 
 export class CreateWorkOrderDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   clientId: string;
 

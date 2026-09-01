@@ -21,6 +21,7 @@ export default function ReceiptFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [clientId, setClientId] = useState('');
+  const [number, setNumber] = useState('');
   const [invoiceId, setInvoiceId] = useState('');
   const [contractNo, setContractNo] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
@@ -40,6 +41,7 @@ export default function ReceiptFormPage() {
       api.get<Receipt>(`/receipts/${id}`).then((r) => {
         const d = r.data;
         setClientId(d.clientId);
+        setNumber(d.number);
         setInvoiceId(d.invoiceId ?? '');
         setContractNo(d.contractNo ?? '');
         setIssueDate(toInputDate(d.issueDate));
@@ -63,7 +65,7 @@ export default function ReceiptFormPage() {
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
     const payload = {
-      clientId, invoiceId: invoiceId || undefined, contractNo: contractNo || undefined, issueDate, currency, status,
+      clientId, number: number.trim() || undefined, invoiceId: invoiceId || undefined, contractNo: contractNo || undefined, issueDate, currency, status,
       paymentMethod: paymentMethod || undefined, paymentRef: paymentRef || undefined,
       preparedBy: preparedBy || undefined, approvedBy: approvedBy || undefined, notes: notes || undefined, items,
     };
@@ -98,6 +100,9 @@ export default function ReceiptFormPage() {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </Select>
+            </Field>
+            <Field label="Receipt Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Against Invoice">
               <Select value={invoiceId} onChange={(e) => setInvoiceId(e.target.value)}>

@@ -18,6 +18,10 @@ export class POItemDto {
 }
 
 export class CreatePurchaseOrderDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   supplierId: string;
 

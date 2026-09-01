@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PurchaseOrderStatus } from '../../common/enums';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CounterService } from '../../common/prisma/counter.service';
@@ -31,7 +31,11 @@ export class PurchaseOrdersService {
 
   async create(dto: CreatePurchaseOrderDto) {
     const issueDate = dto.issueDate ? new Date(dto.issueDate) : new Date();
-    const number = await this.counter.next(DOC_PREFIX.PURCHASE_ORDER, issueDate);
+    const manualNumber = dto.number?.trim();
+    if (manualNumber && await this.prisma.purchaseOrder.findUnique({ where: { number: manualNumber } })) {
+      throw new BadRequestException('A purchase order with this number already exists.');
+    }
+    const number = manualNumber || await this.counter.next(DOC_PREFIX.PURCHASE_ORDER, issueDate);
     const { rows, subtotal, total } = computeItems(dto.items ?? []);
     return this.prisma.purchaseOrder.create({
       data: {

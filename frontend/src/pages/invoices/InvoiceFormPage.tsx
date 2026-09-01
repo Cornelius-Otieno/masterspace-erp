@@ -20,6 +20,7 @@ export default function InvoiceFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [clientId, setClientId] = useState('');
+  const [number, setNumber] = useState('');
   const [contractNo, setContractNo] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [dueDate, setDueDate] = useState('');
@@ -34,6 +35,7 @@ export default function InvoiceFormPage() {
       api.get<Invoice>(`/invoices/${id}`).then((r) => {
         const d = r.data;
         setClientId(d.clientId);
+        setNumber(d.number);
         setContractNo(d.contractNo ?? '');
         setIssueDate(toInputDate(d.issueDate));
         setDueDate(toInputDate(d.dueDate));
@@ -54,7 +56,7 @@ export default function InvoiceFormPage() {
     if (!clientId) return setError('Please select a client.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { clientId, contractNo: contractNo || undefined, issueDate, dueDate: dueDate || undefined, currency, status, notes: notes || undefined, items };
+    const payload = { clientId, number: number.trim() || undefined, contractNo: contractNo || undefined, issueDate, dueDate: dueDate || undefined, currency, status, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/invoices/${id}`, payload) : await api.post('/invoices', payload);
       navigate(`/invoices/${res.data.id}`);
@@ -89,6 +91,9 @@ export default function InvoiceFormPage() {
             </Field>
             <Field label="Contract / LPO No.">
               <TextInput value={contractNo} onChange={(e) => setContractNo(e.target.value)} placeholder="Optional" />
+            </Field>
+            <Field label="Invoice Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Currency">
               <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>

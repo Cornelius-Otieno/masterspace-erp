@@ -19,6 +19,10 @@ export class DeliveryItemDto {
 }
 
 export class CreateDeliveryNoteDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   clientId: string;
 

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { DeliveryStatus } from '../../common/enums';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CounterService } from '../../common/prisma/counter.service';
@@ -24,7 +24,11 @@ export class DeliveryNotesService {
 
   async create(dto: CreateDeliveryNoteDto) {
     const issueDate = dto.issueDate ? new Date(dto.issueDate) : new Date();
-    const number = await this.counter.next(DOC_PREFIX.DELIVERY_NOTE, issueDate);
+    const manualNumber = dto.number?.trim();
+    if (manualNumber && await this.prisma.deliveryNote.findUnique({ where: { number: manualNumber } })) {
+      throw new BadRequestException('A delivery note with this number already exists.');
+    }
+    const number = manualNumber || await this.counter.next(DOC_PREFIX.DELIVERY_NOTE, issueDate);
     return this.prisma.deliveryNote.create({
       data: {
         number,

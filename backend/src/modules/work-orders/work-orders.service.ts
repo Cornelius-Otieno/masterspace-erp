@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { WorkOrderStatus } from '../../common/enums';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CounterService } from '../../common/prisma/counter.service';
@@ -24,7 +24,11 @@ export class WorkOrdersService {
 
   async create(dto: CreateWorkOrderDto) {
     const issueDate = dto.issueDate ? new Date(dto.issueDate) : new Date();
-    const number = await this.counter.next(DOC_PREFIX.WORK_ORDER, issueDate);
+    const manualNumber = dto.number?.trim();
+    if (manualNumber && await this.prisma.workOrder.findUnique({ where: { number: manualNumber } })) {
+      throw new BadRequestException('A work order with this number already exists.');
+    }
+    const number = manualNumber || await this.counter.next(DOC_PREFIX.WORK_ORDER, issueDate);
     return this.prisma.workOrder.create({
       data: {
         number,

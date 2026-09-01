@@ -20,6 +20,7 @@ export default function QuotationFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [clientId, setClientId] = useState('');
+  const [number, setNumber] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [validUntil, setValidUntil] = useState('');
   const [currency, setCurrency] = useState('KES');
@@ -35,6 +36,7 @@ export default function QuotationFormPage() {
       api.get<Quotation>(`/quotations/${id}`).then((r) => {
         const d = r.data;
         setClientId(d.clientId);
+        setNumber(d.number);
         setIssueDate(toInputDate(d.issueDate));
         setValidUntil(toInputDate(d.validUntil));
         setCurrency(d.currency);
@@ -57,7 +59,7 @@ export default function QuotationFormPage() {
     if (!clientId) return setError('Please select a client.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { clientId, issueDate, validUntil: validUntil || undefined, currency, taxRate, status, terms: terms || undefined, notes: notes || undefined, items };
+    const payload = { clientId, number: number.trim() || undefined, issueDate, validUntil: validUntil || undefined, currency, taxRate, status, terms: terms || undefined, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/quotations/${id}`, payload) : await api.post('/quotations', payload);
       navigate(`/quotations/${res.data.id}`);
@@ -89,6 +91,9 @@ export default function QuotationFormPage() {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </Select>
+            </Field>
+            <Field label="Quotation Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Currency">
               <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>

@@ -15,6 +15,10 @@ export class ReceiptItemDto {
 }
 
 export class CreateReceiptDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   clientId: string;
 

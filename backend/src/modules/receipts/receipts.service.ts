@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ReceiptStatus } from '../../common/enums';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CounterService } from '../../common/prisma/counter.service';
@@ -28,7 +28,11 @@ export class ReceiptsService {
 
   async create(dto: CreateReceiptDto) {
     const issueDate = dto.issueDate ? new Date(dto.issueDate) : new Date();
-    const number = await this.counter.next(DOC_PREFIX.RECEIPT, issueDate);
+    const manualNumber = dto.number?.trim();
+    if (manualNumber && await this.prisma.receipt.findUnique({ where: { number: manualNumber } })) {
+      throw new BadRequestException('A receipt with this number already exists.');
+    }
+    const number = manualNumber || await this.counter.next(DOC_PREFIX.RECEIPT, issueDate);
     const { rows, subtotal, total } = computeItems(dto.items ?? []);
     return this.prisma.receipt.create({
       data: {

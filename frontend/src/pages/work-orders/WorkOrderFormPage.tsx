@@ -20,6 +20,7 @@ export default function WorkOrderFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [clientId, setClientId] = useState('');
+  const [number, setNumber] = useState('');
   const [siteDetails, setSiteDetails] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [expectedDate, setExpectedDate] = useState('');
@@ -34,6 +35,7 @@ export default function WorkOrderFormPage() {
       api.get<WorkOrder>(`/work-orders/${id}`).then((r) => {
         const d = r.data;
         setClientId(d.clientId);
+        setNumber(d.number);
         setSiteDetails(d.siteDetails ?? '');
         setIssueDate(toInputDate(d.issueDate));
         setExpectedDate(toInputDate(d.expectedDate));
@@ -52,7 +54,7 @@ export default function WorkOrderFormPage() {
     if (!clientId) return setError('Please select a client.');
     if (tasks.some((t) => !t.task.trim())) return setError('Every task needs a title.');
     setSaving(true);
-    const payload = { clientId, siteDetails: siteDetails || undefined, issueDate, expectedDate: expectedDate || undefined, status, authorizedBy: authorizedBy || undefined, notes: notes || undefined, tasks };
+    const payload = { clientId, number: number.trim() || undefined, siteDetails: siteDetails || undefined, issueDate, expectedDate: expectedDate || undefined, status, authorizedBy: authorizedBy || undefined, notes: notes || undefined, tasks };
     try {
       const res = editing ? await api.patch(`/work-orders/${id}`, payload) : await api.post('/work-orders', payload);
       navigate(`/work-orders/${res.data.id}`);
@@ -84,6 +86,9 @@ export default function WorkOrderFormPage() {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </Select>
+            </Field>
+            <Field label="Work Order Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Authorized By">
               <TextInput value={authorizedBy} onChange={(e) => setAuthorizedBy(e.target.value)} placeholder="Name" />

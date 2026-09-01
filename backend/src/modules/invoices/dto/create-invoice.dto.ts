@@ -25,6 +25,10 @@ export class InvoiceItemDto {
 }
 
 export class CreateInvoiceDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   clientId: string;
 

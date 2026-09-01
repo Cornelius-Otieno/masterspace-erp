@@ -20,6 +20,7 @@ export default function PurchaseOrderFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [supplierId, setSupplierId] = useState('');
+  const [number, setNumber] = useState('');
   const [deliverTo, setDeliverTo] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [expectedDate, setExpectedDate] = useState('');
@@ -35,6 +36,7 @@ export default function PurchaseOrderFormPage() {
       api.get<PurchaseOrder>(`/purchase-orders/${id}`).then((r) => {
         const d = r.data;
         setSupplierId(d.supplierId);
+        setNumber(d.number);
         setDeliverTo(d.deliverTo ?? '');
         setIssueDate(toInputDate(d.issueDate));
         setExpectedDate(toInputDate(d.expectedDate));
@@ -54,7 +56,7 @@ export default function PurchaseOrderFormPage() {
     if (!supplierId) return setError('Please select a supplier.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { supplierId, deliverTo: deliverTo || undefined, issueDate, expectedDate: expectedDate || undefined, currency, status, preparedBy: preparedBy || undefined, notes: notes || undefined, items };
+    const payload = { supplierId, number: number.trim() || undefined, deliverTo: deliverTo || undefined, issueDate, expectedDate: expectedDate || undefined, currency, status, preparedBy: preparedBy || undefined, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/purchase-orders/${id}`, payload) : await api.post('/purchase-orders', payload);
       navigate(`/purchase-orders/${res.data.id}`);
@@ -86,6 +88,9 @@ export default function PurchaseOrderFormPage() {
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
               </Select>
+            </Field>
+            <Field label="Purchase Order Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Deliver To">
               <TextInput value={deliverTo} onChange={(e) => setDeliverTo(e.target.value)} placeholder="Delivery location" />

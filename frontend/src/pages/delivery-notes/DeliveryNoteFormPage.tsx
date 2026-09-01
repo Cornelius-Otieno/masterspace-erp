@@ -20,6 +20,7 @@ export default function DeliveryNoteFormPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [clientId, setClientId] = useState('');
+  const [number, setNumber] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [deliveryDate, setDeliveryDate] = useState('');
   const [deliveredBy, setDeliveredBy] = useState('');
@@ -33,6 +34,7 @@ export default function DeliveryNoteFormPage() {
       api.get<DeliveryNote>(`/delivery-notes/${id}`).then((r) => {
         const d = r.data;
         setClientId(d.clientId);
+        setNumber(d.number);
         setIssueDate(toInputDate(d.issueDate));
         setDeliveryDate(toInputDate(d.deliveryDate));
         setDeliveredBy(d.deliveredBy ?? '');
@@ -48,7 +50,7 @@ export default function DeliveryNoteFormPage() {
     if (!clientId) return setError('Please select a client.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { clientId, issueDate, deliveryDate: deliveryDate || undefined, deliveredBy: deliveredBy || undefined, status, notes: notes || undefined, items };
+    const payload = { clientId, number: number.trim() || undefined, issueDate, deliveryDate: deliveryDate || undefined, deliveredBy: deliveredBy || undefined, status, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/delivery-notes/${id}`, payload) : await api.post('/delivery-notes', payload);
       navigate(`/delivery-notes/${res.data.id}`);
@@ -80,6 +82,9 @@ export default function DeliveryNoteFormPage() {
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </Select>
+            </Field>
+            <Field label="Delivery Note Number">
+              <TextInput value={number} onChange={(e) => setNumber(e.target.value)} placeholder="Leave blank to auto-generate" disabled={editing} />
             </Field>
             <Field label="Delivered By">
               <TextInput value={deliveredBy} onChange={(e) => setDeliveredBy(e.target.value)} placeholder="Driver / staff" />

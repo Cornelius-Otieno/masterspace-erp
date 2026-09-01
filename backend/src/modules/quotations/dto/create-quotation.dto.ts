@@ -14,6 +14,10 @@ export class QuotationItemDto {
 }
 
 export class CreateQuotationDto {
+  @IsOptional()
+  @IsString()
+  number?: string;
+
   @IsString()
   clientId: string;
 
