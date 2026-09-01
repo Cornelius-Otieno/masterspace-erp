@@ -19,8 +19,16 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const corsOrigin = config.get<string>('CORS_ORIGIN') ?? 'http://localhost:5173';
+  const allowedOrigins = new Set([
+    corsOrigin,
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ]);
   app.enableCors({
-    origin: [corsOrigin, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      const isVercelDeployment = /^https:\/\/frontend(?:-[a-z0-9-]+)?-dangco\.vercel\.app$/.test(origin ?? '');
+      callback(null, !origin || allowedOrigins.has(origin) || isVercelDeployment);
+    },
     credentials: true,
   });
 
