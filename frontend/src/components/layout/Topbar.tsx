@@ -12,7 +12,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       >
         <Menu size={20} />
       </button>
-      <div className="hidden text-base font-medium text-slate-500 lg:block">
+      <div className="hidden text-base font-large text-slate-500 lg:block">
         Masterspace Solutions Limited · ERP
       </div>
       <div className="flex items-center gap-3">
