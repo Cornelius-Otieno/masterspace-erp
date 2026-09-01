@@ -3,6 +3,14 @@ import { PrismaService } from './common/prisma/prisma.service';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { Public } from './common/decorators/public.decorator';
 
+function groupTotalsByCurrency(records: { currency: string; total: number }[]) {
+  return records.reduce<Record<string, number>>((totals, record) => {
+    const currency = record.currency || 'KES';
+    totals[currency] = (totals[currency] ?? 0) + record.total;
+    return totals;
+  }, {});
+}
+
 @Controller()
 export class AppController {
   constructor(private readonly prisma: PrismaService) {}
@@ -26,28 +34,28 @@ export class AppController {
       clients,
       suppliers,
     ] = await Promise.all([
-      this.prisma.invoice.aggregate({ _count: true, _sum: { total: true } }),
-      this.prisma.purchaseOrder.aggregate({ _count: true, _sum: { total: true } }),
-      this.prisma.quotation.aggregate({ _count: true, _sum: { total: true } }),
+      this.prisma.invoice.findMany({ select: { currency: true, total: true } }),
+      this.prisma.purchaseOrder.findMany({ select: { currency: true, total: true } }),
+      this.prisma.quotation.findMany({ select: { currency: true, total: true } }),
       this.prisma.deliveryNote.count(),
-      this.prisma.receipt.aggregate({ _count: true, _sum: { total: true } }),
+      this.prisma.receipt.findMany({ select: { currency: true, total: true } }),
       this.prisma.workOrder.count(),
       this.prisma.client.count(),
       this.prisma.supplier.count(),
     ]);
 
     return {
-      invoices: { count: invoices._count, total: invoices._sum.total ?? 0 },
+      invoices: { count: invoices.length, totalsByCurrency: groupTotalsByCurrency(invoices) },
       purchaseOrders: {
-        count: purchaseOrders._count,
-        total: purchaseOrders._sum.total ?? 0,
+        count: purchaseOrders.length,
+        totalsByCurrency: groupTotalsByCurrency(purchaseOrders),
       },
       quotations: {
-        count: quotations._count,
-        total: quotations._sum.total ?? 0,
+        count: quotations.length,
+        totalsByCurrency: groupTotalsByCurrency(quotations),
       },
       deliveryNotes: { count: deliveryNotes, total: 0 },
-      receipts: { count: receipts._count, total: receipts._sum.total ?? 0 },
+      receipts: { count: receipts.length, totalsByCurrency: groupTotalsByCurrency(receipts) },
       workOrders: { count: workOrders, total: 0 },
       clients,
       suppliers,

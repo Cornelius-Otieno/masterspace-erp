@@ -209,11 +209,11 @@ export interface Paginated<T> {
 }
 
 export interface DashboardStats {
-  invoices: { count: number; total: number };
-  purchaseOrders: { count: number; total: number };
-  quotations: { count: number; total: number };
+  invoices: { count: number; totalsByCurrency: Record<string, number> };
+  purchaseOrders: { count: number; totalsByCurrency: Record<string, number> };
+  quotations: { count: number; totalsByCurrency: Record<string, number> };
   deliveryNotes: { count: number; total: number };
-  receipts: { count: number; total: number };
+  receipts: { count: number; totalsByCurrency: Record<string, number> };
   workOrders: { count: number; total: number };
   clients: number;
   suppliers: number;

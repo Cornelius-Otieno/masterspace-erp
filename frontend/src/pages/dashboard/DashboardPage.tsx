@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { formatNumber } from '@/lib/utils';
+import { formatMoney } from '@/lib/utils';
 import type { DashboardStats } from '@/types';
 
 const CARDS = [
@@ -23,6 +23,11 @@ const CARDS = [
   { key: 'receipts', label: 'Receipts', icon: Receipt, to: '/receipts', currency: true },
   { key: 'workOrders', label: 'Work Orders', icon: Wrench, to: '/work-orders', currency: false },
 ] as const;
+
+function formatCurrencyTotals(totals: Record<string, number> | undefined) {
+  const entries = Object.entries(totals ?? {}).sort(([currency]) => (currency === 'USD' ? -1 : 1));
+  return entries.length ? entries.map(([currency, total]) => formatMoney(total, currency)).join(' · ') : formatMoney(0, 'USD');
+}
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -42,7 +47,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {CARDS.map((card) => {
           const Icon = card.icon;
-          const data = stats?.[card.key] as { count: number; total: number } | undefined;
+          const data = stats?.[card.key] as { count: number; totalsByCurrency?: Record<string, number> } | undefined;
           return (
             <Link
               key={card.key}
@@ -62,7 +67,7 @@ export default function DashboardPage() {
               </h3>
               {card.currency && (
                 <p className="mt-1 text-sm text-slate-500">
-                  Value: KES {loading ? '—' : formatNumber(data?.total ?? 0)}
+                  Value: {loading ? '—' : formatCurrencyTotals(data?.totalsByCurrency)}
                 </p>
               )}
             </Link>
