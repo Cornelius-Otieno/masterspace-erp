@@ -6,9 +6,10 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "start": "nest start",
+    "start": "npm run start:railway",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/src/main",
+    "start:railway": "prisma db push && prisma db seed && node dist/src/main",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "ts-node prisma/seed.ts",
