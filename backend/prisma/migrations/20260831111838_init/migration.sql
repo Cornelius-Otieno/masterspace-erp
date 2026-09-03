@@ -6,8 +6,8 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'SALES',
     "active" BOOLEAN NOT NULL DEFAULT true,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
@@ -21,8 +21,8 @@ CREATE TABLE "Client" (
     "country" TEXT DEFAULT 'Kenya',
     "taxPin" TEXT,
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
@@ -36,8 +36,8 @@ CREATE TABLE "Supplier" (
     "country" TEXT DEFAULT 'Kenya',
     "taxPin" TEXT,
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
@@ -53,17 +53,17 @@ CREATE TABLE "Invoice" (
     "number" TEXT NOT NULL,
     "contractNo" TEXT,
     "clientId" TEXT NOT NULL,
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "dueDate" DATETIME,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "dueDate" TIMESTAMP(3),
     "currency" TEXT NOT NULL DEFAULT 'KES',
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "subtotal" REAL NOT NULL DEFAULT 0,
-    "taxTotal" REAL NOT NULL DEFAULT 0,
-    "total" REAL NOT NULL DEFAULT 0,
+    "subtotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "taxTotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "totalInWords" TEXT,
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Invoice_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -72,12 +72,12 @@ CREATE TABLE "InvoiceItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "invoiceId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "taxRate" REAL NOT NULL DEFAULT 0,
-    "quantity" REAL NOT NULL DEFAULT 1,
-    "rate" REAL NOT NULL DEFAULT 0,
-    "amount" REAL NOT NULL DEFAULT 0,
-    "taxAmount" REAL NOT NULL DEFAULT 0,
-    "total" REAL NOT NULL DEFAULT 0,
+    "taxRate" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "quantity" DOUBLE PRECISION NOT NULL DEFAULT 1,
+    "rate" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "taxAmount" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
     CONSTRAINT "InvoiceItem_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -87,16 +87,16 @@ CREATE TABLE "PurchaseOrder" (
     "number" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
     "deliverTo" TEXT DEFAULT 'Masterspace Solutions HQ',
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expectedDate" DATETIME,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expectedDate" TIMESTAMP(3),
     "currency" TEXT NOT NULL DEFAULT 'KES',
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "subtotal" REAL NOT NULL DEFAULT 0,
-    "total" REAL NOT NULL DEFAULT 0,
+    "subtotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "notes" TEXT,
     "preparedBy" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "PurchaseOrder_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -106,9 +106,9 @@ CREATE TABLE "POItem" (
     "purchaseOrderId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "unit" TEXT,
-    "quantity" REAL NOT NULL DEFAULT 1,
-    "rate" REAL NOT NULL DEFAULT 0,
-    "amount" REAL NOT NULL DEFAULT 0,
+    "quantity" DOUBLE PRECISION NOT NULL DEFAULT 1,
+    "rate" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
     CONSTRAINT "POItem_purchaseOrderId_fkey" FOREIGN KEY ("purchaseOrderId") REFERENCES "PurchaseOrder" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -117,17 +117,17 @@ CREATE TABLE "Quotation" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "number" TEXT NOT NULL,
     "clientId" TEXT NOT NULL,
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "validUntil" DATETIME,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "validUntil" TIMESTAMP(3),
     "currency" TEXT NOT NULL DEFAULT 'KES',
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
-    "subtotal" REAL NOT NULL DEFAULT 0,
-    "taxTotal" REAL NOT NULL DEFAULT 0,
-    "total" REAL NOT NULL DEFAULT 0,
+    "subtotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "taxTotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "notes" TEXT,
     "terms" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Quotation_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -136,9 +136,9 @@ CREATE TABLE "QuotationItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "quotationId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "quantity" REAL NOT NULL DEFAULT 1,
-    "unitPrice" REAL NOT NULL DEFAULT 0,
-    "amount" REAL NOT NULL DEFAULT 0,
+    "quantity" DOUBLE PRECISION NOT NULL DEFAULT 1,
+    "unitPrice" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
     CONSTRAINT "QuotationItem_quotationId_fkey" FOREIGN KEY ("quotationId") REFERENCES "Quotation" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -147,13 +147,13 @@ CREATE TABLE "DeliveryNote" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "number" TEXT NOT NULL,
     "clientId" TEXT NOT NULL,
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "deliveryDate" DATETIME,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deliveryDate" TIMESTAMP(3),
     "deliveredBy" TEXT,
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
     "notes" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "DeliveryNote_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -162,7 +162,7 @@ CREATE TABLE "DeliveryItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "deliveryNoteId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "quantity" REAL NOT NULL DEFAULT 1,
+    "quantity" DOUBLE PRECISION NOT NULL DEFAULT 1,
     "unit" TEXT,
     "remarks" TEXT,
     CONSTRAINT "DeliveryItem_deliveryNoteId_fkey" FOREIGN KEY ("deliveryNoteId") REFERENCES "DeliveryNote" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -175,18 +175,18 @@ CREATE TABLE "Receipt" (
     "clientId" TEXT NOT NULL,
     "invoiceId" TEXT,
     "contractNo" TEXT,
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "currency" TEXT NOT NULL DEFAULT 'KES',
     "status" TEXT NOT NULL DEFAULT 'PAID',
-    "subtotal" REAL NOT NULL DEFAULT 0,
-    "total" REAL NOT NULL DEFAULT 0,
+    "subtotal" DOUBLE PRECISION NOT NULL DEFAULT 0,
+    "total" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "paymentMethod" TEXT,
     "paymentRef" TEXT,
     "notes" TEXT,
     "preparedBy" TEXT,
     "approvedBy" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Receipt_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Receipt_invoiceId_fkey" FOREIGN KEY ("invoiceId") REFERENCES "Invoice" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -197,7 +197,7 @@ CREATE TABLE "ReceiptItem" (
     "receiptId" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "milestone" TEXT,
-    "amount" REAL NOT NULL DEFAULT 0,
+    "amount" DOUBLE PRECISION NOT NULL DEFAULT 0,
     CONSTRAINT "ReceiptItem_receiptId_fkey" FOREIGN KEY ("receiptId") REFERENCES "Receipt" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -207,13 +207,13 @@ CREATE TABLE "WorkOrder" (
     "number" TEXT NOT NULL,
     "clientId" TEXT NOT NULL,
     "siteDetails" TEXT,
-    "issueDate" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expectedDate" DATETIME,
+    "issueDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expectedDate" TIMESTAMP(3),
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
     "notes" TEXT,
     "authorizedBy" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "WorkOrder_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -224,7 +224,7 @@ CREATE TABLE "WorkOrderTask" (
     "task" TEXT NOT NULL,
     "description" TEXT,
     "assignedTo" TEXT,
-    "estimatedHours" REAL NOT NULL DEFAULT 0,
+    "estimatedHours" DOUBLE PRECISION NOT NULL DEFAULT 0,
     CONSTRAINT "WorkOrderTask_workOrderId_fkey" FOREIGN KEY ("workOrderId") REFERENCES "WorkOrder" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
