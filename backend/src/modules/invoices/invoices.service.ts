@@ -64,6 +64,7 @@ export class InvoicesService {
         issueDate,
         dueDate: dto.dueDate ? new Date(dto.dueDate) : null,
         currency: dto.currency ?? 'KES',
+        bankAccountId: dto.bankAccountId ?? 'sidian-kes-kenyatta-market',
         status: dto.status ?? InvoiceStatus.DRAFT,
         notes: dto.notes,
         subtotal,
@@ -121,6 +122,7 @@ export class InvoicesService {
       contractNo: dto.contractNo,
       clientId: dto.clientId,
       currency: dto.currency,
+      bankAccountId: dto.bankAccountId,
       status: dto.status,
       notes: dto.notes,
     };

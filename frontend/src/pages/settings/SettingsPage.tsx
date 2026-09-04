@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/hooks/useAuth';
-import { COMPANY } from '@/lib/company';
+import { COMPANY, COMPANY_BANK_ACCOUNTS } from '@/lib/company';
 
 function Row({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -43,11 +43,14 @@ export default function SettingsPage() {
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-navy">
               <CreditCard size={16} className="text-primary" /> Bank Details
             </h3>
-            <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
-              <Row icon={<CreditCard size={18} />} label="Bank" value={`${COMPANY.bank.name} — ${COMPANY.bank.branch}`} />
-              <Row icon={<CreditCard size={18} />} label="Account Name" value={COMPANY.bank.accountName} />
-              <Row icon={<CreditCard size={18} />} label="Account Number" value={COMPANY.bank.accountNumber} />
-              <Row icon={<CreditCard size={18} />} label="SWIFT" value={COMPANY.bank.swift} />
+            <div className="space-y-3">
+              {COMPANY_BANK_ACCOUNTS.map((account) => (
+                <div key={account.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
+                  <p className="text-sm font-semibold text-navy">{account.name} - {account.branch} ({account.currency})</p>
+                  <p className="text-sm text-slate-700">{account.accountName} | Account No. {account.accountNumber}</p>
+                  {account.swift && <p className="text-sm text-slate-700">SWIFT: {account.swift}</p>}
+                </div>
+              ))}
             </div>
           </div>
         </Card>

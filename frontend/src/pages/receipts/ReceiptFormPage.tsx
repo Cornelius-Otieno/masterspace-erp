@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { Card, Field, GhostButton, PrimaryButton, Select, TextArea, TextInput } from '@/components/ui/Form';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { LineItemsEditor } from '@/components/documents/LineItemsEditor';
+import { COMPANY_BANK_ACCOUNTS } from '@/lib/company';
 import { formatMoney, toInputDate } from '@/lib/utils';
 import type { Client, Invoice, Receipt, ReceiptItem } from '@/types';
 
@@ -26,6 +27,7 @@ export default function ReceiptFormPage() {
   const [contractNo, setContractNo] = useState('');
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [currency, setCurrency] = useState('KES');
+  const [bankAccountId, setBankAccountId] = useState('sidian-kes-kenyatta-market');
   const [status, setStatus] = useState('PAID');
   const [paymentMethod, setPaymentMethod] = useState('Bank Transfer');
   const [paymentRef, setPaymentRef] = useState('');
@@ -46,6 +48,7 @@ export default function ReceiptFormPage() {
         setContractNo(d.contractNo ?? '');
         setIssueDate(toInputDate(d.issueDate));
         setCurrency(d.currency);
+        setBankAccountId(d.bankAccountId ?? 'stanbic-usd-imaara');
         setStatus(d.status);
         setPaymentMethod(d.paymentMethod ?? '');
         setPaymentRef(d.paymentRef ?? '');
@@ -65,7 +68,7 @@ export default function ReceiptFormPage() {
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
     const payload = {
-      clientId, number: number.trim() || undefined, invoiceId: invoiceId || undefined, contractNo: contractNo || undefined, issueDate, currency, status,
+      clientId, number: number.trim() || undefined, invoiceId: invoiceId || undefined, contractNo: contractNo || undefined, issueDate, currency, bankAccountId, status,
       paymentMethod: paymentMethod || undefined, paymentRef: paymentRef || undefined,
       preparedBy: preparedBy || undefined, approvedBy: approvedBy || undefined, notes: notes || undefined, items,
     };
@@ -122,6 +125,15 @@ export default function ReceiptFormPage() {
               <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
                 <option value="KES">KES</option>
                 <option value="USD">USD</option>
+              </Select>
+            </Field>
+            <Field label="Receiving Bank Account">
+              <Select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)}>
+                {COMPANY_BANK_ACCOUNTS.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} - {account.branch} ({account.currency})
+                  </option>
+                ))}
               </Select>
             </Field>
             <Field label="Status">

@@ -1,10 +1,11 @@
 import type { Receipt } from '@/types';
-import { COMPANY } from '@/lib/company';
+import { COMPANY, getCompanyBankAccount } from '@/lib/company';
 import { Logo } from '@/components/ui/Logo';
 import { formatDate, formatNumber } from '@/lib/utils';
 
 export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
   const symbol = receipt.currency === 'USD' ? '$' : `${receipt.currency} `;
+  const bankAccount = getCompanyBankAccount(receipt.bankAccountId ?? 'stanbic-usd-imaara');
   return (
     <div className="doc-sheet print-area font-sans">
       {/* Header */}
@@ -57,10 +58,10 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
         </div>
         <div className="rounded-lg border border-slate-200 p-4">
           <p className="text-xs font-bold tracking-[0.2em] text-primary">PAYMENT RECEIVED INTO</p>
-          <p className="mt-1 font-bold text-slate-800">{COMPANY.bank.accountName}</p>
-          <p className="text-sm text-slate-600">{COMPANY.bank.name} — {COMPANY.bank.branch}</p>
-          <p className="text-sm text-slate-600">Account No: {COMPANY.bank.accountNumber}</p>
-          <p className="text-sm text-slate-600">SWIFT Code: {COMPANY.bank.swift}</p>
+          <p className="mt-1 font-bold text-slate-800">{bankAccount.accountName}</p>
+          <p className="text-sm text-slate-600">{bankAccount.name} — {bankAccount.branch}</p>
+          <p className="text-sm text-slate-600">Account No: {bankAccount.accountNumber}</p>
+          {bankAccount.swift && <p className="text-sm text-slate-600">SWIFT Code: {bankAccount.swift}</p>}
         </div>
       </div>
 
@@ -130,15 +131,17 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
           <p className="text-xs font-bold tracking-[0.2em] text-primary">BENEFICIARY BANK</p>
           <div className="mt-2 grid grid-cols-[110px_1fr] gap-y-1 text-sm">
             <span className="text-slate-500">Bank</span>
-            <span className="font-semibold text-slate-800">{COMPANY.bank.name}</span>
+            <span className="font-semibold text-slate-800">{bankAccount.name}</span>
             <span className="text-slate-500">Branch</span>
-            <span className="font-semibold text-slate-800">{COMPANY.bank.branch}</span>
+            <span className="font-semibold text-slate-800">{bankAccount.branch}</span>
             <span className="text-slate-500">Account Name</span>
-            <span className="font-semibold text-slate-800">{COMPANY.bank.accountName}</span>
+            <span className="font-semibold text-slate-800">{bankAccount.accountName}</span>
             <span className="text-slate-500">Account No</span>
-            <span className="font-semibold text-slate-800">{COMPANY.bank.accountNumber}</span>
-            <span className="text-slate-500">SWIFT</span>
-            <span className="font-semibold text-slate-800">{COMPANY.bank.swift}</span>
+            <span className="font-semibold text-slate-800">{bankAccount.accountNumber}</span>
+            {bankAccount.swift && <>
+              <span className="text-slate-500">SWIFT</span>
+              <span className="font-semibold text-slate-800">{bankAccount.swift}</span>
+            </>}
           </div>
         </div>
       </div>

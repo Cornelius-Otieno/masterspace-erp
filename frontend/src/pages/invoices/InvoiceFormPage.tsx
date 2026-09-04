@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import { Card, Field, GhostButton, PrimaryButton, Select, TextArea, TextInput } from '@/components/ui/Form';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { LineItemsEditor } from '@/components/documents/LineItemsEditor';
+import { COMPANY_BANK_ACCOUNTS } from '@/lib/company';
 import { formatMoney, toInputDate } from '@/lib/utils';
 import type { Client, Invoice, InvoiceItem } from '@/types';
 
@@ -25,6 +26,7 @@ export default function InvoiceFormPage() {
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [dueDate, setDueDate] = useState('');
   const [currency, setCurrency] = useState('KES');
+  const [bankAccountId, setBankAccountId] = useState('sidian-kes-kenyatta-market');
   const [status, setStatus] = useState('DRAFT');
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<InvoiceItem[]>([newItem()]);
@@ -40,6 +42,7 @@ export default function InvoiceFormPage() {
         setIssueDate(toInputDate(d.issueDate));
         setDueDate(toInputDate(d.dueDate));
         setCurrency(d.currency);
+        setBankAccountId(d.bankAccountId ?? 'stanbic-usd-imaara');
         setStatus(d.status);
         setNotes(d.notes ?? '');
         setItems(d.items.map((it) => ({ description: it.description, taxRate: it.taxRate, quantity: it.quantity, rate: it.rate })));
@@ -56,7 +59,7 @@ export default function InvoiceFormPage() {
     if (!clientId) return setError('Please select a client.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { clientId, number: number.trim() || undefined, contractNo: contractNo || undefined, issueDate, dueDate: dueDate || undefined, currency, status, notes: notes || undefined, items };
+    const payload = { clientId, number: number.trim() || undefined, contractNo: contractNo || undefined, issueDate, dueDate: dueDate || undefined, currency, bankAccountId, status, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/invoices/${id}`, payload) : await api.post('/invoices', payload);
       navigate(`/invoices/${res.data.id}`);
@@ -99,6 +102,15 @@ export default function InvoiceFormPage() {
               <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
                 <option value="KES">KES</option>
                 <option value="USD">USD</option>
+              </Select>
+            </Field>
+            <Field label="Payment Bank Account">
+              <Select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)}>
+                {COMPANY_BANK_ACCOUNTS.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} - {account.branch} ({account.currency})
+                  </option>
+                ))}
               </Select>
             </Field>
             <Field label="Issue Date">

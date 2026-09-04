@@ -81,6 +81,7 @@ model Invoice {
   issueDate    DateTime      @default(now())
   dueDate      DateTime?
   currency     String        @default("KES")
+  bankAccountId String       @default("stanbic-usd-imaara")
   status       String        @default("DRAFT")
   subtotal     Float         @default(0)
   taxTotal     Float         @default(0)
@@ -216,6 +217,7 @@ model Receipt {
   contractNo   String?
   issueDate    DateTime      @default(now())
   currency     String        @default("KES")
+  bankAccountId String       @default("stanbic-usd-imaara")
   status       String        @default("PAID")
   subtotal     Float         @default(0)
   total        Float         @default(0)

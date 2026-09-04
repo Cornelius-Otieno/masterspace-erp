@@ -104,6 +104,7 @@ export interface Invoice {
   issueDate: string;
   dueDate?: string;
   currency: string;
+  bankAccountId?: string;
   status: InvoiceStatus;
   subtotal: number;
   taxTotal: number;
@@ -174,6 +175,7 @@ export interface Receipt {
   contractNo?: string;
   issueDate: string;
   currency: string;
+  bankAccountId?: string;
   status: ReceiptStatus;
   subtotal: number;
   total: number;

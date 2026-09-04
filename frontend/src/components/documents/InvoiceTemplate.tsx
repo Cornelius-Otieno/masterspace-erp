@@ -1,5 +1,5 @@
 import type { Invoice } from '@/types';
-import { COMPANY } from '@/lib/company';
+import { COMPANY, getCompanyBankAccount } from '@/lib/company';
 import { Logo } from '@/components/ui/Logo';
 import { formatDate, formatNumber } from '@/lib/utils';
 
@@ -7,6 +7,7 @@ const cur = (c: string) => (c === 'USD' ? '$' : c === 'KES' ? 'KES ' : `${c} `);
 
 export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
   const symbol = cur(invoice.currency);
+  const bankAccount = getCompanyBankAccount(invoice.bankAccountId);
   return (
     <div className="doc-sheet print-area font-sans">
       {/* Header */}
@@ -133,13 +134,17 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
           <h3 className="mb-2 text-base font-semibold text-primary">Bank Details</h3>
           <div className="grid grid-cols-[130px_1fr] gap-y-1 text-sm">
             <span className="font-bold text-slate-800">Account Name</span>
-            <span className="text-slate-700">{COMPANY.bank.accountName}</span>
+            <span className="text-slate-700">{bankAccount.accountName}</span>
             <span className="font-bold text-slate-800">Account Number</span>
-            <span className="text-slate-700">{COMPANY.bank.accountNumber}</span>
-            <span className="font-bold text-slate-800">SWIFT Code</span>
-            <span className="text-slate-700">{COMPANY.bank.swift}</span>
+            <span className="text-slate-700">{bankAccount.accountNumber}</span>
+            <span className="font-bold text-slate-800">Branch</span>
+            <span className="text-slate-700">{bankAccount.branch}</span>
             <span className="font-bold text-slate-800">Bank</span>
-            <span className="text-slate-700">{COMPANY.bank.name}</span>
+            <span className="text-slate-700">{bankAccount.name} ({bankAccount.currency})</span>
+            {bankAccount.swift && <>
+              <span className="font-bold text-slate-800">SWIFT Code</span>
+              <span className="text-slate-700">{bankAccount.swift}</span>
+            </>}
           </div>
         </div>
       </div>

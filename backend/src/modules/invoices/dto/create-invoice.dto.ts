@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -47,6 +48,10 @@ export class CreateInvoiceDto {
   @IsOptional()
   @IsString()
   currency?: string;
+
+  @IsOptional()
+  @IsIn(['sidian-kes-kenyatta-market', 'stanbic-kes-express-way', 'stanbic-usd-imaara'])
+  bankAccountId?: string;
 
   @IsOptional()
   @IsEnum(InvoiceStatus)

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsIn, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ReceiptStatus } from '../../../common/enums';
 
 export class ReceiptItemDto {
@@ -37,6 +37,10 @@ export class CreateReceiptDto {
   @IsOptional()
   @IsString()
   currency?: string;
+
+  @IsOptional()
+  @IsIn(['sidian-kes-kenyatta-market', 'stanbic-kes-express-way', 'stanbic-usd-imaara'])
+  bankAccountId?: string;
 
   @IsOptional()
   @IsEnum(ReceiptStatus)
