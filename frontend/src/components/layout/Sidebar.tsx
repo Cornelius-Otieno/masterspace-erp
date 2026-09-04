@@ -12,6 +12,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { useAuth } from '@/hooks/useAuth';
 
 const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -23,10 +24,12 @@ const NAV = [
   { to: '/work-orders', label: 'Work Orders', icon: Wrench },
   { to: '/clients', label: 'Clients', icon: Users },
   { to: '/suppliers', label: 'Suppliers', icon: Building2 },
+  { to: '/users', label: 'User Management', icon: Users, adminOnly: true },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { user } = useAuth();
   return (
     <>
       {open && (
@@ -41,7 +44,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           <Logo dark />
         </div>
         <nav className="flex flex-col gap-1 p-3">
-          {NAV.map((item) => {
+          {NAV.filter((item) => !item.adminOnly || user?.role === 'ADMIN').map((item) => {
             const Icon = item.icon;
             return (
               <NavLink

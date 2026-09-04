@@ -12,7 +12,7 @@ company's official templates.
 
 | Layer      | Technology                                                             |
 | ---------- | ---------------------------------------------------------------------- |
-| Backend    | NestJS 10 · Prisma ORM · SQLite · JWT auth · class-validator           |
+| Backend    | NestJS 10 · Prisma ORM · PostgreSQL · JWT auth · class-validator       |
 | Frontend   | React 18 · TypeScript · Vite · TailwindCSS · React Router · Axios      |
 | Icons      | lucide-react                                                           |
 
@@ -64,7 +64,7 @@ cd backend
 npm install
 cp .env.example .env          # adjust JWT_SECRET / PORT if needed
 
-npx prisma migrate dev        # create the SQLite database + tables
+npx prisma migrate deploy     # apply PostgreSQL migrations
 npx prisma db seed            # seed users, counters, sample clients/suppliers
 
 npm run start:dev             # dev server with watch → http://localhost:3000/api
@@ -99,6 +99,10 @@ The seed also creates sample clients (including *Ministry of Information Communi
 Technology*), suppliers, and the document counters (Invoice counter starts at 33 so the
 first invoice issued is `INV0034-…`).
 
+The operational team accounts use the temporary password `Masterspace@2026` and must
+change it on their first login. Bob Ochieng, James Mwita, Philip Adar, and Cornelius
+Otieno are administrators.
+
 ---
 
 ## Available Scripts
@@ -132,6 +136,7 @@ require a `Bearer` JWT.
 | ------ | ----------------------------- | ------------------------------- |
 | POST   | `/auth/login`                 | Authenticate, returns JWT       |
 | GET    | `/auth/me`                    | Current user                    |
+| POST   | `/auth/change-password`       | Change the authenticated user's password |
 | GET    | `/dashboard/stats`            | Dashboard counts & totals       |
 | CRUD   | `/invoices`                   | Invoices                        |
 | CRUD   | `/purchase-orders`            | Purchase orders                 |
@@ -152,8 +157,7 @@ client only submits the raw line items.
 
 ## Notes
 
-- The database is **SQLite** (`backend/prisma/dev.db`) for zero-config local development.
-  Prisma enums are not supported on SQLite, so status/role fields are stored as strings
-  and mirrored by TypeScript enums in `backend/src/common/enums.ts`.
-- To switch to PostgreSQL/MySQL for production, change the `datasource` provider in
-  `backend/prisma/schema.prisma` and update `DATABASE_URL`.
+- The database is **PostgreSQL**. Set `DATABASE_URL` to a valid `postgresql://` or
+  `postgres://` connection string before running Prisma commands.
+- Status and role fields are stored as strings and mirrored by TypeScript enums in
+  `backend/src/common/enums.ts`.

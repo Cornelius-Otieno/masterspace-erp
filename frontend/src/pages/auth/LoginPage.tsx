@@ -66,11 +66,6 @@ export default function LoginPage() {
           </PrimaryButton>
         </form>
 
-        <div className="mt-6 rounded-lg bg-slate-50 p-3 text-xs text-slate-500">
-          <p className="font-semibold text-slate-600">Demo credentials</p>
-          <p>Admin: admin@masterspace.co.ke / Admin@123</p>
-          <p>Finance: finance@masterspace.co.ke / Finance@123</p>
-        </div>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppLayout } from '@/components/layout/AppLayout';
 import type { JSX } from 'react';
 
 import LoginPage from '@/pages/auth/LoginPage';
+import ChangePasswordPage from '@/pages/auth/ChangePasswordPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
 
 import InvoicesListPage from '@/pages/invoices/InvoicesListPage';
@@ -35,9 +36,11 @@ import ClientFormPage from '@/pages/clients/ClientFormPage';
 import SuppliersListPage from '@/pages/suppliers/SuppliersListPage';
 import SupplierFormPage from '@/pages/suppliers/SupplierFormPage';
 import SettingsPage from '@/pages/settings/SettingsPage';
+import UsersPage from '@/pages/users/UsersPage';
 
 function Protected({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
+  const location = useLocation();
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center text-slate-400">
@@ -45,7 +48,9 @@ function Protected({ children }: { children: JSX.Element }) {
       </div>
     );
   }
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.mustChangePassword && location.pathname !== '/change-password') return <Navigate to="/change-password" replace />;
+  return children;
 }
 
 export default function App() {
@@ -100,6 +105,8 @@ export default function App() {
         <Route path="/suppliers/:id/edit" element={<SupplierFormPage />} />
 
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/users" element={<UsersPage />} />
+        <Route path="/change-password" element={<ChangePasswordPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

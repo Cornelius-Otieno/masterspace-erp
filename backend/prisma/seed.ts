@@ -14,6 +14,7 @@ async function main() {
     create: {
       name: 'System Administrator',
       email: 'admin@masterspace.co.ke',
+      username: 'admin',
       password: adminPassword,
       role: "ADMIN",
       active: true,
@@ -27,11 +28,29 @@ async function main() {
     create: {
       name: 'Evans Ochieng',
       email: 'finance@masterspace.co.ke',
+      username: 'finance',
       password: financePassword,
       role: "FINANCE",
       active: true,
     },
   });
+
+  const temporaryPassword = await bcrypt.hash('Masterspace@2026', 10);
+  const teamUsers = [
+    { name: 'Elizabeth Ojala', email: 'elizabeth.ojala@masterspace.co.ke', username: 'elizabeth.ojala', role: 'SALES' },
+    { name: 'James Mwita', email: 'james.okech@masterspace.co.ke', username: 'james.okech', role: 'ADMIN' },
+    { name: 'Bob Ochieng', email: 'bob.ochieng@masterspace.co.ke', username: 'bob.ochieng', role: 'ADMIN' },
+    { name: 'Joseph Ondiwa', email: 'joseph.ondiwa@masterspace.co.ke', username: 'joseph.ondiwa', role: 'SALES' },
+    { name: 'Philip Adar', email: 'philip.adar@masterspace.co.ke', username: 'philip.adar', role: 'ADMIN' },
+    { name: 'Cornelius Otieno', email: 'cornelius.otieno@masterspace.co.ke', username: 'cornelius.otieno', role: 'ADMIN' },
+  ];
+  for (const user of teamUsers) {
+    await prisma.user.upsert({
+      where: { email: user.email },
+      update: { name: user.name, username: user.username, role: user.role, active: true, deletedAt: null },
+      create: { ...user, password: temporaryPassword, mustChangePassword: true, active: true },
+    });
+  }
 
   // ---------------- Document counters ----------------
   // INV currently at 33 → next invoice will be INV0034

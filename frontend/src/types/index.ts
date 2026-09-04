@@ -21,8 +21,10 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  username: string;
   role: Role;
   active: boolean;
+  mustChangePassword?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
