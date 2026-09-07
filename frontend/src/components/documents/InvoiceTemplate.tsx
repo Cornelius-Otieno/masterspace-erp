@@ -13,9 +13,9 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-4xl font-bold italic text-primary">Invoice</h1>
+          <h1 className="text-4xl font-bold text-primary">INVOICE</h1>
           {invoice.contractNo && (
-            <p className="mt-1 text-xs font-semibold text-slate-700">
+            <p className="mt-3 text-xs font-semibold text-slate-700">
               CONTRACT NO. {invoice.contractNo}
             </p>
           )}
