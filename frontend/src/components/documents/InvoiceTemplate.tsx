@@ -160,11 +160,6 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
       {/* Footer */}
       <div className="mt-10 border-t border-dashed border-slate-300 pt-3 text-[11px] text-slate-500">
         <div className="flex justify-between">
-          <div>
-            <p><span className="text-slate-400">Invoice No</span> {invoice.number}</p>
-            <p><span className="text-slate-400">Invoice Date</span> {formatDate(invoice.issueDate)}</p>
-            <p><span className="text-slate-400">Billed To</span> {invoice.client?.name}</p>
-          </div>
           <div className="self-end">Page 1 of 1</div>
         </div>
         <p className="mt-2 text-center text-slate-400">
