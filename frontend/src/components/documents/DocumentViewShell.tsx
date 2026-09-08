@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Printer, Pencil, Trash2 } from 'lucide-react';
-import html2pdf from 'html2pdf.js';
 import { api } from '@/lib/api';
 import { GhostButton, PrimaryButton, Select } from '@/components/ui/Form';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
@@ -43,22 +42,15 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
   };
 
   const onDownloadPdf = async () => {
-    const documentElement = document.querySelector<HTMLElement>('.print-area');
-    if (!documentElement) return;
-
     setDownloading(true);
     try {
-      await document.fonts.ready;
-      await html2pdf()
-        .set({
-          margin: 0,
-          filename: `${data.number}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        })
-        .from(documentElement)
-        .save();
+      const response = await api.get(`/documents/${endpoint}/${id}/pdf`, { responseType: 'blob' });
+      const url = URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${data.number}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
     } finally {
       setDownloading(false);
     }

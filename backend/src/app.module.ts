@@ -12,6 +12,7 @@ import { QuotationsModule } from './modules/quotations/quotations.module';
 import { DeliveryNotesModule } from './modules/delivery-notes/delivery-notes.module';
 import { ReceiptsModule } from './modules/receipts/receipts.module';
 import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
+import { PdfModule } from './common/pdf/pdf.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WorkOrdersModule } from './modules/work-orders/work-orders.module';
     DeliveryNotesModule,
     ReceiptsModule,
     WorkOrdersModule,
+    PdfModule,
   ],
   controllers: [AppController],
 })
