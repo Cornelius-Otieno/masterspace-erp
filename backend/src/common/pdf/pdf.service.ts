@@ -22,7 +22,7 @@ export class PdfService {
       await page.waitForSelector('.print-area', { timeout: 15000 });
       await page.addStyleTag({
         content: `
-          @page { size: A4; margin: 16mm 0; }
+          @page { size: A4; margin: 10mm 0; }
           .print-area {
             box-sizing: border-box !important;
             width: 210mm !important;
@@ -38,7 +38,7 @@ export class PdfService {
         format: 'A4',
         printBackground: true,
         preferCSSPageSize: false,
-        margin: { top: '16mm', right: '0', bottom: '16mm', left: '0' },
+        margin: { top: '10mm', right: '0', bottom: '16mm', left: '0' },
       });
       return Buffer.from(pdf);
     } finally {
