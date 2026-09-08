@@ -15,8 +15,7 @@ export class PdfService {
 
     try {
       const page = await browser.newPage();
-      await page.goto(appUrl, { waitUntil: 'domcontentloaded' });
-      await page.evaluate((accessToken) => {
+      await page.evaluateOnNewDocument((accessToken) => {
         window.localStorage.setItem('ms_erp_token', accessToken);
       }, token);
       await page.goto(`${appUrl}${path}`, { waitUntil: 'networkidle0' });
