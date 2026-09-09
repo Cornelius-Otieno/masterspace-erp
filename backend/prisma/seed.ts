@@ -7,19 +7,7 @@ async function main() {
   console.log('🌱 Seeding Masterspace ERP database...');
 
   // ---------------- Users ----------------
-  const adminPassword = await bcrypt.hash('Admin@123', 10);
-  await prisma.user.upsert({
-    where: { email: 'admin@masterspace.co.ke' },
-    update: {},
-    create: {
-      name: 'System Administrator',
-      email: 'admin@masterspace.co.ke',
-      username: 'admin',
-      password: adminPassword,
-      role: "ADMIN",
-      active: true,
-    },
-  });
+  await prisma.user.deleteMany({ where: { email: 'admin@masterspace.co.ke' } });
 
   const financePassword = await bcrypt.hash('Finance@123', 10);
   await prisma.user.upsert({
@@ -133,7 +121,6 @@ async function main() {
   }
 
   console.log('✅ Seed complete.');
-  console.log('   Admin login:   admin@masterspace.co.ke / Admin@123');
   console.log('   Finance login: finance@masterspace.co.ke / Finance@123');
 }
 

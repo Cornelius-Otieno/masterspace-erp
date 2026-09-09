@@ -92,7 +92,6 @@ Open **http://localhost:5173** and sign in.
 
 | Role    | Email                       | Password      |
 | ------- | --------------------------- | ------------- |
-| Admin   | admin@masterspace.co.ke     | `Admin@123`   |
 | Finance | finance@masterspace.co.ke   | `Finance@123` |
 
 The seed also creates sample clients (including *Ministry of Information Communication
