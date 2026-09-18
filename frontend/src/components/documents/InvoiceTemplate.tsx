@@ -80,12 +80,12 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
         <thead>
           <tr className="bg-primary text-left text-white">
             <th className="rounded-l-md px-3 py-3 font-semibold">Item</th>
-            <th className="px-2 py-3 text-center font-semibold">Local Tax Rate</th>
-            <th className="px-2 py-3 text-center font-semibold">Quantity</th>
-            <th className="px-2 py-3 text-right font-semibold">Rate</th>
-            <th className="px-2 py-3 text-right font-semibold">Amount</th>
-            <th className="px-2 py-3 text-right font-semibold">Local Tax</th>
-            <th className="rounded-r-md px-3 py-3 text-right font-semibold">Total</th>
+            <th className="w-px whitespace-nowrap px-2 py-3 text-center font-semibold">Local Tax</th>
+            <th className="w-px whitespace-nowrap px-2 py-3 text-center font-semibold">Qty</th>
+            <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Rate</th>
+            <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Amount</th>
+            <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Tax Amt</th>
+            <th className="w-px whitespace-nowrap rounded-r-md px-3 py-3 text-right font-semibold">Total</th>
           </tr>
         </thead>
         <tbody className="bg-teal-light/60">
@@ -95,22 +95,41 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
                 <span className="mr-1 font-semibold">{i + 1}.</span>
                 <span className="whitespace-pre-line">{it.description}</span>
               </td>
-              <td className="px-2 py-4 text-center text-slate-700">{it.taxRate}%</td>
-              <td className="px-2 py-4 text-center text-slate-700">{formatNumber(it.quantity)}</td>
-              <td className="px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.rate)}</td>
-              <td className="px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.amount ?? 0)}</td>
-              <td className="px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.taxAmount ?? 0)}</td>
-              <td className="px-3 py-4 text-right font-semibold text-slate-800">{symbol}{formatNumber(it.total ?? 0)}</td>
+              <td className="whitespace-nowrap px-2 py-4 text-center text-slate-700">{it.taxRate}%</td>
+              <td className="whitespace-nowrap px-2 py-4 text-center text-slate-700">{formatNumber(it.quantity)}</td>
+              <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.rate)}</td>
+              <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.amount ?? 0)}</td>
+              <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.taxAmount ?? 0)}</td>
+              <td className="whitespace-nowrap px-3 py-4 text-right font-semibold text-slate-800">{symbol}{formatNumber(it.total ?? 0)}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Totals + words */}
-      <div className="mt-6 grid grid-cols-2 gap-6">
-        <div className="text-sm">
-          <span className="font-bold text-slate-800">Total (in words) : </span>
-          <span className="uppercase text-slate-700">{invoice.totalInWords}</span>
+      {/* Totals, words & bank details */}
+      <div className="mt-6 grid grid-cols-2 items-start gap-6">
+        <div className="space-y-3">
+          <div className="text-sm">
+            <span className="font-bold text-slate-800">Total (in words) : </span>
+            <span className="uppercase text-slate-700">{invoice.totalInWords}</span>
+          </div>
+          <div className="rounded-lg bg-teal-light p-4">
+            <h3 className="mb-2 text-base font-semibold text-primary">Bank Details</h3>
+            <div className="grid grid-cols-[100px_1fr] gap-y-1 text-sm">
+              <span className="font-bold text-slate-800">Account Name</span>
+              <span className="text-slate-700">{bankAccount.accountName}</span>
+              <span className="font-bold text-slate-800">Account No.</span>
+              <span className="text-slate-700">{bankAccount.accountNumber}</span>
+              <span className="font-bold text-slate-800">Branch</span>
+              <span className="text-slate-700">{bankAccount.branch}</span>
+              <span className="font-bold text-slate-800">Bank</span>
+              <span className="text-slate-700">{bankAccount.name} ({bankAccount.currency})</span>
+              {bankAccount.swift && <>
+                <span className="font-bold text-slate-800">SWIFT Code</span>
+                <span className="text-slate-700">{bankAccount.swift}</span>
+              </>}
+            </div>
+          </div>
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
@@ -118,33 +137,12 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
             <span className="text-slate-800">{symbol}{formatNumber(invoice.subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-slate-600">Local Tax</span>
+            <span className="text-slate-600">Tax Amt</span>
             <span className="text-slate-800">{symbol}{formatNumber(invoice.taxTotal)}</span>
           </div>
           <div className="mt-2 flex justify-between border-t-2 border-slate-800 pt-2">
             <span className="text-lg font-bold text-slate-900">Total ({invoice.currency})</span>
             <span className="text-lg font-bold text-slate-900">{symbol}{formatNumber(invoice.total)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Bank details */}
-      <div className="mt-6 grid grid-cols-2 gap-6">
-        <div className="rounded-lg bg-teal-light p-4">
-          <h3 className="mb-2 text-base font-semibold text-primary">Bank Details</h3>
-          <div className="grid grid-cols-[130px_1fr] gap-y-1 text-sm">
-            <span className="font-bold text-slate-800">Account Name</span>
-            <span className="text-slate-700">{bankAccount.accountName}</span>
-            <span className="font-bold text-slate-800">Account Number</span>
-            <span className="text-slate-700">{bankAccount.accountNumber}</span>
-            <span className="font-bold text-slate-800">Branch</span>
-            <span className="text-slate-700">{bankAccount.branch}</span>
-            <span className="font-bold text-slate-800">Bank</span>
-            <span className="text-slate-700">{bankAccount.name} ({bankAccount.currency})</span>
-            {bankAccount.swift && <>
-              <span className="font-bold text-slate-800">SWIFT Code</span>
-              <span className="text-slate-700">{bankAccount.swift}</span>
-            </>}
           </div>
         </div>
       </div>
