@@ -26,8 +26,7 @@ async function bootstrap() {
   ]);
   app.enableCors({
     origin: (origin, callback) => {
-      const isVercelDeployment = /^https:\/\/frontend(?:-[a-z0-9-]+)?-dangco\.vercel\.app$/.test(origin ?? '');
-      callback(null, !origin || allowedOrigins.has(origin) || isVercelDeployment);
+      callback(null, !origin || allowedOrigins.has(origin));
     },
     credentials: true,
   });

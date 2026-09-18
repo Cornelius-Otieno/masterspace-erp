@@ -28,17 +28,13 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
               <span className="w-24 font-bold text-slate-800">Invoice Date</span>
               <span className="text-slate-600">{formatDate(invoice.issueDate)}</span>
             </div>
-            <div className="flex gap-3">
-              <span className="w-24 font-bold text-slate-800">Due Date</span>
-              <span className="text-slate-600">{formatDate(invoice.dueDate)}</span>
-            </div>
           </div>
         </div>
         <Logo />
       </div>
 
       {/* Billed By / Billed To */}
-      <div className="mt-8 grid grid-cols-2 gap-5">
+      <div className="mt-8 grid grid-cols-2 gap-5 text-xs">
         <div className="rounded-lg bg-teal-light p-4">
           <h2 className="mb-2 text-lg font-semibold text-primary">Billed By</h2>
           <p className="font-semibold text-slate-800">{COMPANY.name}</p>
@@ -84,8 +80,7 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
             <th className="w-px whitespace-nowrap px-2 py-3 text-center font-semibold">Qty</th>
             <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Rate</th>
             <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Amount</th>
-            <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Tax Amt</th>
-            <th className="w-px whitespace-nowrap rounded-r-md px-3 py-3 text-right font-semibold">Total</th>
+            <th className="w-px whitespace-nowrap rounded-r-md px-3 py-3 text-right font-semibold">Tax Amt</th>
           </tr>
         </thead>
         <tbody className="bg-teal-light/60">
@@ -99,8 +94,7 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
               <td className="whitespace-nowrap px-2 py-4 text-center text-slate-700">{formatNumber(it.quantity)}</td>
               <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.rate)}</td>
               <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.amount ?? 0)}</td>
-              <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.taxAmount ?? 0)}</td>
-              <td className="whitespace-nowrap px-3 py-4 text-right font-semibold text-slate-800">{symbol}{formatNumber(it.total ?? 0)}</td>
+              <td className="whitespace-nowrap px-3 py-4 text-right text-slate-700">{symbol}{formatNumber(it.taxAmount ?? 0)}</td>
             </tr>
           ))}
         </tbody>
@@ -117,7 +111,7 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
             <h3 className="mb-2 text-base font-semibold text-primary">Bank Details</h3>
             <div className="grid grid-cols-[100px_1fr] gap-y-1 text-sm">
               <span className="font-bold text-slate-800">Account Name</span>
-              <span className="text-slate-700">{bankAccount.accountName}</span>
+              <span className="whitespace-nowrap text-slate-700">{bankAccount.accountName}</span>
               <span className="font-bold text-slate-800">Account No.</span>
               <span className="text-slate-700">{bankAccount.accountNumber}</span>
               <span className="font-bold text-slate-800">Branch</span>
@@ -149,9 +143,9 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
 
       {/* Notes */}
       {invoice.notes && (
-        <div className="mt-6">
-          <h3 className="text-base font-semibold text-primary">Additional Notes</h3>
-          <p className="mt-1 whitespace-pre-line text-sm text-slate-600">{invoice.notes}</p>
+        <div className="mt-6 text-xs">
+          <h3 className="text-sm font-semibold text-primary">Additional Notes</h3>
+          <p className="mt-1 whitespace-pre-line text-slate-600">{invoice.notes}</p>
         </div>
       )}
 
