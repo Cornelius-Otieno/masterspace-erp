@@ -38,6 +38,7 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
               ['AGAINST INVOICE', receipt.invoice?.number || '—'],
               ['CONTRACT NO.', receipt.contractNo || '—'],
               ['CURRENCY', receipt.currency],
+              ['STATUS', receipt.status],
             ].map(([k, v]) => (
               <tr key={k}>
                 <td className="w-2/5 border border-slate-200 bg-teal-light px-3 py-2 font-semibold text-primary">{k}</td>
@@ -62,17 +63,6 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
           <p className="text-sm text-slate-600">{bankAccount.name} — {bankAccount.branch}</p>
           <p className="text-sm text-slate-600">Account No: {bankAccount.accountNumber}</p>
           {bankAccount.swift && <p className="text-sm text-slate-600">SWIFT Code: {bankAccount.swift}</p>}
-        </div>
-      </div>
-
-      {/* Total banner */}
-      <div className="mt-5 flex items-center justify-between rounded-lg bg-navy px-6 py-5 text-white">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-300">Total Amount Received</p>
-          <p className="text-3xl font-extrabold">{symbol}{formatNumber(receipt.total)}</p>
-        </div>
-        <div className="rounded-lg border-2 border-white px-6 py-3 text-xl font-bold tracking-[0.2em]">
-          {receipt.status}
         </div>
       </div>
 

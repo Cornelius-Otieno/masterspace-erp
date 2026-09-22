@@ -15,11 +15,14 @@ export class PdfService {
 
     try {
       const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(30000);
       await page.evaluateOnNewDocument((accessToken) => {
         window.localStorage.setItem('ms_erp_token', accessToken);
       }, token);
-      await page.goto(`${appUrl}${path}`, { waitUntil: 'networkidle0' });
-      await page.waitForSelector('.print-area', { timeout: 15000 });
+      // networkidle2 tolerates background polling/keep-alive connections that never
+      // fully quiesce and could otherwise hang the render indefinitely.
+      await page.goto(`${appUrl}${path}`, { waitUntil: 'networkidle2', timeout: 30000 });
+      await page.waitForSelector('.print-area', { timeout: 20000 });
       await page.addStyleTag({
         content: `
           @page { size: A4; margin: 10mm 0; }

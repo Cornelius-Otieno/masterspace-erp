@@ -34,6 +34,7 @@ export function PurchaseOrderTemplate({ po }: { po: PurchaseOrder }) {
               ['DATE', formatDate(po.issueDate)],
               ['EXPECTED', formatDate(po.expectedDate)],
               ['CURRENCY', po.currency],
+              ['STATUS', po.status],
             ].map(([k, v]) => (
               <tr key={k}>
                 <td className="w-1/3 border border-slate-200 bg-teal-light px-3 py-2 font-semibold text-primary">{k}</td>
@@ -56,17 +57,6 @@ export function PurchaseOrderTemplate({ po }: { po: PurchaseOrder }) {
           <p className="text-xs font-bold tracking-wide text-primary">DELIVER TO</p>
           <p className="mt-1 font-bold text-slate-800">{po.deliverTo}</p>
           <p className="text-sm text-slate-600">Expected: {formatDate(po.expectedDate)}</p>
-        </div>
-      </div>
-
-      {/* Total banner */}
-      <div className="mt-5 flex items-center justify-between rounded-lg bg-navy px-6 py-5 text-white">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-300">Total Order Value</p>
-          <p className="text-3xl font-extrabold">{symbol}{formatNumber(po.total)}</p>
-        </div>
-        <div className="rounded-lg border-2 border-white px-6 py-3 text-xl font-bold tracking-wide">
-          {po.status}
         </div>
       </div>
 

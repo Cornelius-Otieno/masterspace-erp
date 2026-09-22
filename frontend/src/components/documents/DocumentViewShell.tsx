@@ -20,6 +20,7 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -43,6 +44,7 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
 
   const onDownloadPdf = async () => {
     setDownloading(true);
+    setPdfError(null);
     try {
       const response = await api.get(`/documents/${endpoint}/${id}/pdf`, { responseType: 'blob' });
       const url = URL.createObjectURL(response.data);
@@ -51,6 +53,8 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
       link.download = `${data.number}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
+    } catch (err) {
+      setPdfError('Could not generate the PDF. Please try again.');
     } finally {
       setDownloading(false);
     }
@@ -89,6 +93,10 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
           </PrimaryButton>
         </div>
       </div>
+
+      {pdfError && (
+        <div className="no-print mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{pdfError}</div>
+      )}
 
       <div className="overflow-x-auto pb-8">
         <DocumentPreview type={type} data={data} />
