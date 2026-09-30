@@ -51,7 +51,7 @@ masterspace-erp/
 
 ## Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 22.12+ and npm
 
 ---
 
@@ -71,6 +71,30 @@ npm run start:dev             # dev server with watch → http://localhost:3000/
 ```
 
 The API is served under the `/api` prefix. Health check: `GET /api/health`.
+
+### Production deployment (Ubuntu)
+
+Use the committed lockfiles and explicitly install Puppeteer's matching Chrome
+before restarting the API. This catches missing browser downloads and shared
+system dependencies before users try to generate documents.
+
+```bash
+cd backend
+npm ci
+npx prisma generate
+apt-get update && apt-get install -y unzip
+npx puppeteer browsers install chrome --install-deps
+npm run build
+npm run check:pdf-runtime
+npx prisma migrate deploy
+```
+
+Set `PDF_APP_URL` to the public frontend origin (without `/api`) and
+`DATABASE_URL` to the intended PostgreSQL database. Build the frontend with its
+production `VITE_API_URL`, then restart the API with PM2 and save its process
+list. Verify `GET /api/health` and generate a real document PDF before calling
+the deployment complete. Do not run the seed script when deploying over a
+restored database.
 
 ### 2. Frontend (SPA)
 
