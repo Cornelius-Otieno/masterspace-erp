@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
 import { PurchaseOrderStatus } from '../../../common/enums';
 
 export class POItemDto {
@@ -44,6 +44,11 @@ export class CreatePurchaseOrderDto {
   @IsOptional()
   @IsEnum(PurchaseOrderStatus)
   status?: PurchaseOrderStatus;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  taxRate?: number;
 
   @IsOptional()
   @IsString()

@@ -6,7 +6,6 @@ export default function PurchaseOrderViewPage() {
       type="purchase-order"
       endpoint="purchase-orders"
       title="Purchase Order"
-      statuses={['DRAFT', 'SENT', 'APPROVED', 'RECEIVED', 'CANCELLED']}
     />
   );
 }

@@ -141,6 +141,8 @@ model PurchaseOrder {
   currency     String              @default("KES")
   status       String              @default("DRAFT")
   subtotal     Float               @default(0)
+  taxRate      Float               @default(0)
+  taxTotal     Float               @default(0)
   total        Float               @default(0)
   notes        String?
   preparedBy   String?

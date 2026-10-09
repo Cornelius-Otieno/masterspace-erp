@@ -34,7 +34,6 @@ export function PurchaseOrderTemplate({ po }: { po: PurchaseOrder }) {
               ['DATE', formatDate(po.issueDate)],
               ['EXPECTED', formatDate(po.expectedDate)],
               ['CURRENCY', po.currency],
-              ['STATUS', po.status],
             ].map(([k, v]) => (
               <tr key={k}>
                 <td className="w-1/3 border border-slate-200 bg-teal-light px-3 py-2 font-semibold text-primary">{k}</td>
@@ -92,6 +91,10 @@ export function PurchaseOrderTemplate({ po }: { po: PurchaseOrder }) {
           <div className="flex justify-between rounded bg-slate-100 px-4 py-2 text-sm">
             <span className="text-slate-600">Subtotal</span>
             <span className="font-semibold text-slate-800">{symbol}{formatNumber(po.subtotal)}</span>
+          </div>
+          <div className="flex justify-between rounded bg-slate-100 px-4 py-2 text-sm">
+            <span className="text-slate-600">Tax ({formatNumber(po.taxRate ?? 0)}%)</span>
+            <span className="font-semibold text-slate-800">{symbol}{formatNumber(po.taxTotal ?? 0)}</span>
           </div>
           <div className="flex justify-between rounded bg-navy px-4 py-3 text-white">
             <span className="font-bold">Grand Total</span>

@@ -25,7 +25,7 @@ export default function PurchaseOrderFormPage() {
   const [issueDate, setIssueDate] = useState(toInputDate(new Date()));
   const [expectedDate, setExpectedDate] = useState('');
   const [currency, setCurrency] = useState('KES');
-  const [status, setStatus] = useState('DRAFT');
+  const [taxRate, setTaxRate] = useState('0');
   const [preparedBy, setPreparedBy] = useState('');
   const [notes, setNotes] = useState('');
   const [items, setItems] = useState<POItem[]>([newItem()]);
@@ -41,7 +41,7 @@ export default function PurchaseOrderFormPage() {
         setIssueDate(toInputDate(d.issueDate));
         setExpectedDate(toInputDate(d.expectedDate));
         setCurrency(d.currency);
-        setStatus(d.status);
+        setTaxRate(String(d.taxRate ?? 0));
         setPreparedBy(d.preparedBy ?? '');
         setNotes(d.notes ?? '');
         setItems(d.items.map((it) => ({ description: it.description, unit: it.unit ?? '', quantity: it.quantity, rate: it.rate })));
@@ -49,14 +49,17 @@ export default function PurchaseOrderFormPage() {
     }
   }, [id, editing]);
 
-  const total = items.reduce((s, it) => s + it.quantity * it.rate, 0);
+  const subtotal = items.reduce((s, it) => s + it.quantity * it.rate, 0);
+  const taxValue = Math.max(Number(taxRate) || 0, 0);
+  const taxTotal = (subtotal * taxValue) / 100;
+  const total = subtotal + taxTotal;
 
   const submit = async () => {
     setError(null);
     if (!supplierId) return setError('Please select a supplier.');
     if (items.some((it) => !it.description.trim())) return setError('Every line item needs a description.');
     setSaving(true);
-    const payload = { supplierId, number: number.trim() || undefined, deliverTo: deliverTo || undefined, issueDate, expectedDate: expectedDate || undefined, currency, status, preparedBy: preparedBy || undefined, notes: notes || undefined, items };
+    const payload = { supplierId, number: number.trim() || undefined, deliverTo: deliverTo || undefined, issueDate, expectedDate: expectedDate || undefined, currency, taxRate: taxValue, preparedBy: preparedBy || undefined, notes: notes || undefined, items };
     try {
       const res = editing ? await api.patch(`/purchase-orders/${id}`, payload) : await api.post('/purchase-orders', payload);
       navigate(`/purchase-orders/${res.data.id}`);
@@ -107,12 +110,8 @@ export default function PurchaseOrderFormPage() {
             <Field label="Expected Date">
               <TextInput type="date" value={expectedDate} onChange={(e) => setExpectedDate(e.target.value)} />
             </Field>
-            <Field label="Status">
-              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-                {['DRAFT', 'SENT', 'APPROVED', 'RECEIVED', 'CANCELLED'].map((s) => (
-                  <option key={s} value={s}>{s}</option>
-                ))}
-              </Select>
+            <Field label="Tax (%)">
+              <TextInput type="number" min="0" step="any" value={taxRate} onChange={(e) => setTaxRate(e.target.value)} placeholder="e.g. 16" />
             </Field>
             <Field label="Prepared By">
               <TextInput value={preparedBy} onChange={(e) => setPreparedBy(e.target.value)} placeholder="Name" />
@@ -137,6 +136,8 @@ export default function PurchaseOrderFormPage() {
           />
           <div className="mt-4 flex justify-end">
             <div className="w-64 text-sm">
+              <div className="flex justify-between"><span>Subtotal</span><span>{formatMoney(subtotal, currency)}</span></div>
+              <div className="flex justify-between"><span>Tax ({taxValue}%)</span><span>{formatMoney(taxTotal, currency)}</span></div>
               <div className="flex justify-between border-t border-slate-200 pt-1 font-semibold text-navy"><span>Total</span><span>{formatMoney(total, currency)}</span></div>
             </div>
           </div>

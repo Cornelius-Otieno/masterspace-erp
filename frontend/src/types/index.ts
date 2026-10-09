@@ -128,6 +128,8 @@ export interface PurchaseOrder {
   currency: string;
   status: PurchaseOrderStatus;
   subtotal: number;
+  taxRate: number;
+  taxTotal: number;
   total: number;
   notes?: string;
   preparedBy?: string;

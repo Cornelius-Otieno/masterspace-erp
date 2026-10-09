@@ -9,11 +9,11 @@ import { DocumentPreview } from './DocumentPreview';
 interface Props {
   type: 'invoice' | 'purchase-order' | 'quotation' | 'delivery-note' | 'receipt' | 'work-order';
   endpoint: string;
-  statuses: string[];
+  statuses?: string[];
   title: string;
 }
 
-export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
+export function DocumentViewShell({ type, endpoint, statuses = [], title }: Props) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
@@ -71,17 +71,19 @@ export function DocumentViewShell({ type, endpoint, statuses, title }: Props) {
           <ArrowLeft size={16} /> Back
         </GhostButton>
         <div className="flex flex-wrap items-center gap-2">
-          <Select
-            value={data.status}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="w-40"
-          >
-            {statuses.map((s) => (
-              <option key={s} value={s}>
-                {s.replace('_', ' ')}
-              </option>
-            ))}
-          </Select>
+          {statuses.length > 0 && (
+            <Select
+              value={data.status}
+              onChange={(e) => onStatusChange(e.target.value)}
+              className="w-40"
+            >
+              {statuses.map((s) => (
+                <option key={s} value={s}>
+                  {s.replace('_', ' ')}
+                </option>
+              ))}
+            </Select>
+          )}
           <GhostButton onClick={() => navigate(`/${endpoint}/${id}/edit`)}>
             <Pencil size={16} /> Edit
           </GhostButton>

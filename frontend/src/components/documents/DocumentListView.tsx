@@ -11,7 +11,7 @@ interface Props<T> {
   subtitle?: string;
   endpoint: string;
   newLabel: string;
-  statuses: string[];
+  statuses?: string[];
   columns: Column<T>[];
 }
 
@@ -20,7 +20,7 @@ export function DocumentListView<T extends { id: string }>({
   subtitle,
   endpoint,
   newLabel,
-  statuses,
+  statuses = [],
   columns,
 }: Props<T>) {
   const navigate = useNavigate();
@@ -50,14 +50,16 @@ export function DocumentListView<T extends { id: string }>({
             className="pl-9"
           />
         </div>
-        <Select value={status} onChange={(e) => setStatus(e.target.value)} className="w-48">
-          <option value="">All statuses</option>
-          {statuses.map((s) => (
-            <option key={s} value={s}>
-              {s.replace('_', ' ')}
-            </option>
-          ))}
-        </Select>
+        {statuses.length > 0 && (
+          <Select value={status} onChange={(e) => setStatus(e.target.value)} className="w-48">
+            <option value="">All statuses</option>
+            {statuses.map((s) => (
+              <option key={s} value={s}>
+                {s.replace('_', ' ')}
+              </option>
+            ))}
+          </Select>
+        )}
       </div>
 
       <DocumentTable

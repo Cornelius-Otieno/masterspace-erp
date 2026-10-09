@@ -6,7 +6,7 @@ import { DOC_PREFIX } from '../../common/utils/document-number.util';
 import { CreatePurchaseOrderDto, POItemDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
 
-function computeItems(items: POItemDto[]) {
+function computeItems(items: POItemDto[], taxRate = 0) {
   let subtotal = 0;
   const rows = items.map((it) => {
     const amount = (it.quantity ?? 0) * (it.rate ?? 0);
@@ -19,7 +19,8 @@ function computeItems(items: POItemDto[]) {
       amount,
     };
   });
-  return { rows, subtotal, total: subtotal };
+  const taxTotal = (subtotal * taxRate) / 100;
+  return { rows, subtotal, taxTotal, total: subtotal + taxTotal };
 }
 
 @Injectable()
@@ -36,7 +37,8 @@ export class PurchaseOrdersService {
       throw new BadRequestException('A purchase order with this number already exists.');
     }
     const number = manualNumber || await this.counter.next(DOC_PREFIX.PURCHASE_ORDER, issueDate);
-    const { rows, subtotal, total } = computeItems(dto.items ?? []);
+    const taxRate = dto.taxRate ?? 0;
+    const { rows, subtotal, taxTotal, total } = computeItems(dto.items ?? [], taxRate);
     return this.prisma.purchaseOrder.create({
       data: {
         number,
@@ -49,6 +51,8 @@ export class PurchaseOrdersService {
         notes: dto.notes,
         preparedBy: dto.preparedBy,
         subtotal,
+        taxRate,
+        taxTotal,
         total,
         items: { create: rows },
       },
@@ -90,7 +94,7 @@ export class PurchaseOrdersService {
   }
 
   async update(id: string, dto: UpdatePurchaseOrderDto) {
-    await this.findOne(id);
+    const existing = await this.findOne(id);
     const data: any = {
       supplierId: dto.supplierId,
       deliverTo: dto.deliverTo,
@@ -101,12 +105,17 @@ export class PurchaseOrdersService {
     };
     if (dto.issueDate) data.issueDate = new Date(dto.issueDate);
     if (dto.expectedDate) data.expectedDate = new Date(dto.expectedDate);
-    if (dto.items) {
-      const { rows, subtotal, total } = computeItems(dto.items);
+    if (dto.items || dto.taxRate !== undefined) {
+      const taxRate = dto.taxRate ?? existing.taxRate;
+      const { rows, subtotal, taxTotal, total } = computeItems(dto.items ?? existing.items, taxRate);
       data.subtotal = subtotal;
+      data.taxRate = taxRate;
+      data.taxTotal = taxTotal;
       data.total = total;
-      await this.prisma.pOItem.deleteMany({ where: { purchaseOrderId: id } });
-      data.items = { create: rows };
+      if (dto.items) {
+        await this.prisma.pOItem.deleteMany({ where: { purchaseOrderId: id } });
+        data.items = { create: rows };
+      }
     }
     return this.prisma.purchaseOrder.update({
       where: { id },

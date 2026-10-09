@@ -19,18 +19,19 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
               CONTRACT NO. {invoice.contractNo}
             </p>
           )}
-          <div className="mt-4 space-y-1 text-sm">
-            <div className="flex gap-3">
-              <span className="w-24 font-bold text-slate-800">Invoice No</span>
-              <span className="text-slate-600">{invoice.number}</span>
-            </div>
-            <div className="flex gap-3">
-              <span className="w-24 font-bold text-slate-800">Invoice Date</span>
-              <span className="text-slate-600">{formatDate(invoice.issueDate)}</span>
-            </div>
-          </div>
         </div>
         <Logo />
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm">
+        <div className="flex gap-3">
+          <span className="font-bold text-slate-800">Invoice No</span>
+          <span className="text-slate-600">{invoice.number}</span>
+        </div>
+        <div className="flex gap-3">
+          <span className="font-bold text-slate-800">Invoice Date</span>
+          <span className="text-slate-600">{formatDate(invoice.issueDate)}</span>
+        </div>
       </div>
 
       {/* Billed By / Billed To */}
@@ -79,8 +80,7 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
             <th className="w-px whitespace-nowrap px-2 py-3 text-center font-semibold">Local Tax</th>
             <th className="w-px whitespace-nowrap px-2 py-3 text-center font-semibold">Qty</th>
             <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Rate</th>
-            <th className="w-px whitespace-nowrap px-2 py-3 text-right font-semibold">Amount</th>
-            <th className="w-px whitespace-nowrap rounded-r-md px-3 py-3 text-right font-semibold">Tax Amt</th>
+            <th className="w-px whitespace-nowrap rounded-r-md px-3 py-3 text-right font-semibold">Amount</th>
           </tr>
         </thead>
         <tbody className="bg-teal-light/60">
@@ -93,8 +93,7 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
               <td className="whitespace-nowrap px-2 py-4 text-center text-slate-700">{it.taxRate}%</td>
               <td className="whitespace-nowrap px-2 py-4 text-center text-slate-700">{formatNumber(it.quantity)}</td>
               <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.rate)}</td>
-              <td className="whitespace-nowrap px-2 py-4 text-right text-slate-700">{symbol}{formatNumber(it.amount ?? 0)}</td>
-              <td className="whitespace-nowrap px-3 py-4 text-right text-slate-700">{symbol}{formatNumber(it.taxAmount ?? 0)}</td>
+              <td className="whitespace-nowrap px-3 py-4 text-right text-slate-700">{symbol}{formatNumber(it.amount ?? 0)}</td>
             </tr>
           ))}
         </tbody>
