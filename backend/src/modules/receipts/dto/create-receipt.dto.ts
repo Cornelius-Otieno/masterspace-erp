@@ -39,7 +39,7 @@ export class CreateReceiptDto {
   currency?: string;
 
   @IsOptional()
-  @IsIn(['sidian-kes-kenyatta-market', 'stanbic-kes-express-way', 'stanbic-usd-imaara'])
+  @IsIn(['sidian-kes-kenyatta-market', 'stanbic-kes-express-way', 'stanbic-usd-imaara', 'dahabshil-usd'])
   bankAccountId?: string;
 
   @IsOptional()
