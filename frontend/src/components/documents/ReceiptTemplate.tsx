@@ -60,8 +60,9 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
         <div className="rounded-lg border border-slate-200 p-4">
           <p className="text-xs font-bold tracking-[0.2em] text-primary">PAYMENT RECEIVED INTO</p>
           <p className="mt-1 font-bold text-slate-800">{bankAccount.accountName}</p>
-          <p className="text-sm text-slate-600">{bankAccount.name} — {bankAccount.branch}</p>
+          <p className="text-sm text-slate-600">{bankAccount.name}{bankAccount.branch && ` — ${bankAccount.branch}`}</p>
           <p className="text-sm text-slate-600">Account No: {bankAccount.accountNumber}</p>
+          {bankAccount.merchantNo && <p className="text-sm text-slate-600">Merchant No: {bankAccount.merchantNo}</p>}
           {bankAccount.swift && <p className="text-sm text-slate-600">SWIFT Code: {bankAccount.swift}</p>}
         </div>
       </div>
@@ -122,12 +123,18 @@ export function ReceiptTemplate({ receipt }: { receipt: Receipt }) {
           <div className="mt-2 grid grid-cols-[110px_1fr] gap-y-1 text-sm">
             <span className="text-slate-500">Bank</span>
             <span className="font-semibold text-slate-800">{bankAccount.name}</span>
-            <span className="text-slate-500">Branch</span>
-            <span className="font-semibold text-slate-800">{bankAccount.branch}</span>
+            {bankAccount.branch && <>
+              <span className="text-slate-500">Branch</span>
+              <span className="font-semibold text-slate-800">{bankAccount.branch}</span>
+            </>}
             <span className="text-slate-500">Account Name</span>
             <span className="font-semibold text-slate-800">{bankAccount.accountName}</span>
             <span className="text-slate-500">Account No</span>
             <span className="font-semibold text-slate-800">{bankAccount.accountNumber}</span>
+            {bankAccount.merchantNo && <>
+              <span className="text-slate-500">Merchant No</span>
+              <span className="font-semibold text-slate-800">{bankAccount.merchantNo}</span>
+            </>}
             {bankAccount.swift && <>
               <span className="text-slate-500">SWIFT</span>
               <span className="font-semibold text-slate-800">{bankAccount.swift}</span>

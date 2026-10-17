@@ -46,8 +46,8 @@ export default function SettingsPage() {
             <div className="space-y-3">
               {COMPANY_BANK_ACCOUNTS.map((account) => (
                 <div key={account.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
-                  <p className="text-sm font-semibold text-navy">{account.name} - {account.branch} ({account.currency})</p>
-                  <p className="text-sm text-slate-700">{account.accountName} | Account No. {account.accountNumber}</p>
+                  <p className="text-sm font-semibold text-navy">{account.name}{account.branch && ` - ${account.branch}`} ({account.currency})</p>
+                  <p className="text-sm text-slate-700">{account.accountName} | Account No. {account.accountNumber}{account.merchantNo && ` | Merchant No. ${account.merchantNo}`}</p>
                   {account.swift && <p className="text-sm text-slate-700">SWIFT: {account.swift}</p>}
                 </div>
               ))}

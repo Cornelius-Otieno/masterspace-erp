@@ -17,10 +17,11 @@ export const COMPANY = {
 export interface CompanyBankAccount {
   id: string;
   name: string;
-  branch: string;
+  branch?: string;
   currency: 'KES' | 'USD';
   accountName: string;
   accountNumber: string;
+  merchantNo?: string;
   swift?: string;
 }
 
@@ -49,6 +50,14 @@ export const COMPANY_BANK_ACCOUNTS: CompanyBankAccount[] = [
     accountName: 'Masterspace Solutions Ltd',
     accountNumber: '0100012676217',
     swift: 'SBICKENX',
+  },
+  {
+    id: 'dahabshil-usd',
+    name: 'Dahabshil Bank International',
+    currency: 'USD',
+    accountName: 'Masterspace Solutions',
+    accountNumber: '201021368001',
+    merchantNo: '760393',
   },
 ];
 

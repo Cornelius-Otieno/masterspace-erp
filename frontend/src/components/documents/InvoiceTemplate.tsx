@@ -113,10 +113,16 @@ export function InvoiceTemplate({ invoice }: { invoice: Invoice }) {
               <span className="whitespace-nowrap text-slate-700">{bankAccount.accountName}</span>
               <span className="font-bold text-slate-800">Account No.</span>
               <span className="text-slate-700">{bankAccount.accountNumber}</span>
-              <span className="font-bold text-slate-800">Branch</span>
-              <span className="text-slate-700">{bankAccount.branch}</span>
+              {bankAccount.branch && <>
+                <span className="font-bold text-slate-800">Branch</span>
+                <span className="text-slate-700">{bankAccount.branch}</span>
+              </>}
               <span className="font-bold text-slate-800">Bank</span>
               <span className="text-slate-700">{bankAccount.name} ({bankAccount.currency})</span>
+              {bankAccount.merchantNo && <>
+                <span className="font-bold text-slate-800">Merchant No.</span>
+                <span className="text-slate-700">{bankAccount.merchantNo}</span>
+              </>}
               {bankAccount.swift && <>
                 <span className="font-bold text-slate-800">SWIFT Code</span>
                 <span className="text-slate-700">{bankAccount.swift}</span>

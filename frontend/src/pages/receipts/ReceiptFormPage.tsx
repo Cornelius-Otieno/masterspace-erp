@@ -131,7 +131,7 @@ export default function ReceiptFormPage() {
               <Select value={bankAccountId} onChange={(e) => setBankAccountId(e.target.value)}>
                 {COMPANY_BANK_ACCOUNTS.map((account) => (
                   <option key={account.id} value={account.id}>
-                    {account.name} - {account.branch} ({account.currency})
+                    {account.name}{account.branch && ` - ${account.branch}`} ({account.currency})
                   </option>
                 ))}
               </Select>
